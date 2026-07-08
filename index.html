@@ -249,41 +249,58 @@
     function clearRaceCache() {
       try {
         Object.keys(localStorage)
-          .filter(k => k.startsWith("adaptRace:") || k.startsWith("adaptRaceV4:"))
+          .filter(k => k.startsWith("adaptRace:") || k.startsWith("adaptRaceV4:") || k.startsWith("adaptRaceV5:"))
           .forEach(k => localStorage.removeItem(k));
       } catch {}
     }
 
-    function estabilizarCorrida(corrida, mes) {
-      // A publicação CSV do Google Sheets às vezes entrega uma versão antiga por cache.
-      // Para evitar o personagem voltar na pista, seguramos o maior número DENTRO DO MESMO MÊS.
-      // Ao trocar o campo "MÊS DE REFERÊNCIA" na planilha, a chave muda e a corrida pode começar do zero.
-      if(new URLSearchParams(location.search).has("resetRace")) clearRaceCache();
+    function versionRank(v) {
+      const s = String(v||"").trim();
+      if(!s) return 0;
+      // Aceita: 2026-07-08 09:40, 08/07/2026 09:40, v12, 12 etc.
+      const iso = s.match(/(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:\D+(\d{1,2})(?::(\d{1,2}))?)?/);
+      if(iso) return Number(`${iso[1]}${iso[2].padStart(2,"0")}${iso[3].padStart(2,"0")}${(iso[4]||"0").padStart(2,"0")}${(iso[5]||"0").padStart(2,"0")}`);
+      const br = s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\D+(\d{1,2})(?::(\d{1,2}))?)?/);
+      if(br) return Number(`${br[3]}${br[2].padStart(2,"0")}${br[1].padStart(2,"0")}${(br[4]||"0").padStart(2,"0")}${(br[5]||"0").padStart(2,"0")}`);
+      const nums = s.match(/\d+/g);
+      return nums ? Number(nums.join("")) : 1;
+    }
+
+    function estabilizarCorrida(corrida, mes, versaoCorrida) {
+      // O Google Sheets publicado em CSV pode entregar um retorno antigo por alguns minutos.
+      // Antes, o painel segurava sempre o MAIOR número do mês. Isso impedia regressão, mas também
+      // fazia um teste 20 -> 15 voltar para 20 se uma resposta antiga reaparecesse.
+      // Agora a planilha é a fonte da verdade. Com "VERSÃO DA CORRIDA", respostas antigas são ignoradas.
+      const params = new URLSearchParams(location.search);
+      if(params.has("resetRace")) clearRaceCache();
 
       const mesKey = normKey(mes || "atual");
-      const activeMonthKey = "adaptRaceV4:activeMonth";
+      const activeMonthKey = "adaptRaceV5:activeMonth";
       const prevMonth = localStorage.getItem(activeMonthKey);
-      if(prevMonth && prevMonth !== mesKey) {
-        clearRaceCache();
-      }
+      if(prevMonth && prevMonth !== mesKey) clearRaceCache();
       try { localStorage.setItem(activeMonthKey, mesKey); } catch {}
 
-      const cacheKey = `adaptRaceV4:${mesKey}`;
-      let cache = {};
-      try { cache = JSON.parse(localStorage.getItem(cacheKey)||"{}"); } catch { cache = {}; }
+      const normalized = corrida.map(c=>({...c, meta:Number(c.meta)||0, realizado:Number(c.realizado)||0}));
+      const versionText = String(versaoCorrida||"").trim();
 
-      const nextCache = {};
-      const out = corrida.map(c=>{
-        const key = normKey(c.nome);
-        const prev = cache[key];
-        const realizado = prev && Number(prev.meta) === Number(c.meta) && Number(prev.realizado) > Number(c.realizado)
-          ? Number(prev.realizado)
-          : Number(c.realizado);
-        nextCache[key] = {realizado, meta:c.meta};
-        return {...c, realizado};
-      });
-      try { localStorage.setItem(cacheKey, JSON.stringify(nextCache)); } catch {}
-      return out;
+      // Sem versão cadastrada: não segura máximo no localStorage. Mostra exatamente o que a planilha retornar.
+      // Isso permite corrigir 20 -> 15 imediatamente. Para blindar contra cache velho, cadastre VERSÃO DA CORRIDA.
+      if(!versionText) return normalized;
+
+      const cacheKey = `adaptRaceV5:${mesKey}`;
+      let cache = null;
+      try { cache = JSON.parse(localStorage.getItem(cacheKey)||"null"); } catch { cache = null; }
+
+      const currentRank = versionRank(versionText);
+      const cachedRank = versionRank(cache && cache.version);
+
+      // Se chegou uma publicação antiga do Sheets, mantém o último snapshot aceito e não regrava cache velho.
+      if(cache && cachedRank > currentRank && Array.isArray(cache.corrida)) {
+        return cache.corrida;
+      }
+
+      try { localStorage.setItem(cacheKey, JSON.stringify({version:versionText, corrida:normalized})); } catch {}
+      return normalized;
     }
 
     function colorCls(v, type) {
@@ -425,6 +442,7 @@
 
       const saida = {
         mes:              kvGet("MÊS DE REFERÊNCIA")||kvGet("MES DE REFERENCIA"),
+        versao_corrida:   kvGet("VERSÃO DA CORRIDA")||kvGet("VERSAO DA CORRIDA")||kvGet("ATUALIZAÇÃO DA CORRIDA")||kvGet("ATUALIZACAO DA CORRIDA")||kvGet("ATUALIZADO EM CORRIDA"),
         clientes_ativos:  num(kvGet("CLIENTES ATIVOS (fim do mês)")),
         novos_clientes:   num(kvGet("NOVOS CLIENTES NO MÊS")),
         meta_novos:       num(kvGet("META DE NOVOS CLIENTES")),
@@ -503,7 +521,7 @@
         })).filter(c=>c.cliente)
       };
 
-      saida.corrida = estabilizarCorrida(saida.corrida, saida.mes);
+      saida.corrida = estabilizarCorrida(saida.corrida, saida.mes, saida.versao_corrida);
       return saida;
     }
 
