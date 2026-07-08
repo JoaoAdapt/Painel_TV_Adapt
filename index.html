@@ -237,14 +237,24 @@
     }
 
     // ── CSV PARSER ───────────────────────────────────────────────
+    // Pula linhas de título/dica exportadas pelo Sheets e encontra o header real.
+    const KNOWN_HEADERS = ["CAMPO","SETOR","VENDEDOR","NOME COMPLETO","NOME DO CLIENTE",
+      "TEXTO DO AVISO","TIPO","MÊS DE REFERÊNCIA","CELEBRAR"];
     function parseCSV(text) {
       const lines = text.trim().split("\n");
-      const headers = splitLine(lines[0]);
-      return lines.slice(1)
+      let headerIdx = 0;
+      for(let i=0;i<Math.min(lines.length,6);i++){
+        const cols = splitLine(lines[i]).map(c=>c.trim().toUpperCase());
+        if(KNOWN_HEADERS.some(h=>cols.some(c=>c===h||c.startsWith(h)))){
+          headerIdx=i; break;
+        }
+      }
+      const headers = splitLine(lines[headerIdx]).map(h=>h.trim());
+      return lines.slice(headerIdx+1)
         .map(l => {
           const vals = splitLine(l);
           const obj = {};
-          headers.forEach((h,i) => obj[h.trim()] = (vals[i]||"").trim());
+          headers.forEach((h,i) => obj[h] = (vals[i]||"").trim());
           return obj;
         })
         .filter(r => Object.values(r).some(v => v !== ""));
