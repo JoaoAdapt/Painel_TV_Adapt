@@ -438,7 +438,7 @@
     }
 
     function renderNotices() {
-      const nCards = dados.avisos.map(a=>`<div class="notice ${a.prioridade==="Alta"?"high":"normal'}"><div><div class="priority">${a.prioridade}</div>${a.texto}</div></div>`).join("")
+      const nCards = dados.avisos.map(a=>`<div class="notice ${a.prioridade==="Alta"?"high":"normal"}"><div><div class="priority">${a.prioridade}</div>${a.texto}</div></div>`).join("")
         ||`<div class="notice normal">Sem avisos no momento.</div>`;
       const tCards = dados.tarefas.map(t=>{
         const s=t.atrasadas===0?"🟢":t.atrasadas<=2?"🟡":"🔴";
@@ -470,10 +470,10 @@
           : `left:calc(${leftPct}% - 23px)`;
 
         const spriteEl = sp
-          ? `<div class="runner-sprite ${done?"done":"running'}" style="${spriteStyle}"><span class="runner-label">${Math.round(pct*100)}%</span></div>`
+          ? `<div class="runner-sprite ${done?"done":"running"}" style="${spriteStyle}"><span class="runner-label">${Math.round(pct*100)}%</span></div>`
           : `<div class="runner-sprite ${done?"done":"running"}" style="left:calc(${leftPct}% - 23px);width:46px;height:46px;background:var(--accent);border-radius:50%;display:grid;place-items:center;font-size:22px">${done?"🎉":"🏃"}<span class="runner-label">${Math.round(pct*100)}%</span></div>`;
 
-        return `<div class="race-lane ${done?"done":"'}">
+        return `<div class="race-lane ${done?"done":""}">
           <div class="race-person-name">${c.nome}</div>
           <div class="race-track">
             <div class="finish-line"></div>
