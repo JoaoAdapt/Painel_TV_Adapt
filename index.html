@@ -11,414 +11,571 @@
     :root{
       --bg:#0D0D0D;--accent:#2EAD8A;--card:#1A1A1A;--border:#2A2A2A;
       --text:#FFFFFF;--muted:#A0A0A0;--yellow:#FFD93D;--red:#FF4D4D;
-      --purple:#B993FF;--blue:#6BB6FF;--gold:#FFD36E;--header:92px;
+      --purple:#B993FF;--blue:#6BB6FF;--gold:#FFD36E;
+      --header:92px;--race:148px;
     }
-    *{box-sizing:border-box}html,body{margin:0;width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
-    body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 18% 10%,rgba(46,173,138,.18),transparent 28%),radial-gradient(circle at 82% 18%,rgba(185,147,255,.10),transparent 24%),radial-gradient(circle at 50% 100%,rgba(46,173,138,.08),transparent 35%);pointer-events:none;z-index:0}
-    #stars{position:fixed;inset:0;z-index:1;opacity:.9}.app{position:relative;z-index:2;width:100vw;height:100vh;padding:28px 42px 36px}
-    header{height:var(--header);display:flex;align-items:flex-start;justify-content:space-between;pointer-events:none}.logo{font-size:28px;font-weight:800;letter-spacing:-.04em}.logo span{color:var(--accent)}
-    .timebox{text-align:right}.clock{font-size:36px;font-weight:800;letter-spacing:-.04em}.date{margin-top:4px;color:var(--muted);font-size:16px;font-weight:600;text-transform:capitalize}
-    .slides{position:absolute;inset:calc(var(--header) + 18px) 42px 66px}.slide{position:absolute;inset:0;opacity:0;transform:translateY(14px);transition:opacity .8s ease,transform .8s ease;pointer-events:none}.slide.active{opacity:1;transform:none;pointer-events:auto}
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
+    body::before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 18% 10%,rgba(46,173,138,.18),transparent 28%),radial-gradient(circle at 82% 18%,rgba(185,147,255,.10),transparent 24%),radial-gradient(circle at 50% 100%,rgba(46,173,138,.08),transparent 35%);pointer-events:none;z-index:0}
+    #stars{position:fixed;inset:0;z-index:1;opacity:.9}
+    .app{position:relative;z-index:2;width:100vw;height:100vh;padding:28px 42px 0}
+    header{height:var(--header);display:flex;align-items:flex-start;justify-content:space-between;pointer-events:none}
+    .logo{font-size:28px;font-weight:800;letter-spacing:-.04em}.logo span{color:var(--accent)}
+    .timebox{text-align:right}.clock{font-size:36px;font-weight:800;letter-spacing:-.04em}
+    .date{margin-top:4px;color:var(--muted);font-size:16px;font-weight:600;text-transform:capitalize}
+    .slides{position:absolute;inset:calc(var(--header) + 18px) 42px calc(var(--race) + 72px)}
+    .slide{position:absolute;inset:0;opacity:0;transform:translateY(14px);transition:opacity .8s ease,transform .8s ease;pointer-events:none}
+    .slide.active{opacity:1;transform:none;pointer-events:auto}
     .slide-title{font-size:32px;font-weight:800;letter-spacing:-.04em;margin:0 0 22px}.subtle{color:var(--muted)}
     .card{background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01)),var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:0 22px 60px rgba(0,0,0,.25);position:relative;overflow:hidden}
-    .card:after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.045),transparent 38%);pointer-events:none}
-    .metric-grid{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:1fr 1fr 132px;gap:20px;height:100%}.metric-card{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px}.metric-card.wide{grid-column:1/-1;align-items:flex-start;padding:28px 34px;background:linear-gradient(110deg,rgba(46,173,138,.20),rgba(26,26,26,.94) 45%,rgba(46,173,138,.07))}
-    .metric-number{font-size:clamp(76px,8.2vw,154px);font-weight:800;line-height:.86;letter-spacing:-.075em}.metric-label{margin-top:18px;color:var(--muted);font-size:24px;font-weight:700;text-transform:lowercase}.small-note{margin-top:14px;color:var(--muted);font-size:18px;font-weight:600}.accent{color:var(--accent)}.yellow{color:var(--yellow)}.red{color:var(--red)}
-    .progress{width:100%;height:12px;margin-top:24px;background:#111;border:1px solid var(--border);border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .8s ease}.trend{position:absolute;top:22px;right:24px;font-size:34px;font-weight:800}.streak{display:flex;align-items:center;gap:18px;font-size:38px;font-weight:800;letter-spacing:-.04em}.streak .fire{font-size:54px;filter:drop-shadow(0 0 20px rgba(255,217,61,.25))}
-    .sector-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;height:calc(100% - 62px)}.sector-card{padding:24px 28px}.sector-top{display:flex;justify-content:space-between;align-items:center;gap:18px}.sector-name{font-size:28px;font-weight:800}.status{font-size:17px;font-weight:800;padding:8px 12px;border-radius:999px;background:#111;border:1px solid var(--border)}.sector-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:18px;font-weight:700;margin-top:20px}.sector-card blockquote{margin:20px 0 0;color:#d7d7d7;font-size:18px;font-style:italic;line-height:1.35}
-    .culture-grid,.notice-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;height:calc(100% - 62px)}.panel{padding:26px 28px}.panel h2{margin:0 0 20px;font-size:24px}.list{display:flex;flex-direction:column;gap:13px}.person,.compact-row,.task-row,.notice,.achievement{display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:14px}.avatar{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,rgba(46,173,138,.78),rgba(255,255,255,.08));font-weight:800;color:#fff;flex:0 0 auto;font-size:16px}.person-info strong,.compact-row strong{display:block;font-size:18px}.person-info span,.compact-row span{display:block;margin-top:3px;color:var(--muted);font-size:15px;font-weight:600}.section-gap{margin-top:28px}.today{border-color:rgba(255,217,61,.65);box-shadow:0 0 0 1px rgba(255,217,61,.15),0 0 26px rgba(255,217,61,.08);animation:pulse .9s ease-in-out infinite alternate}.compact-row{justify-content:space-between}.compact-row em{color:#e8e8e8;font-style:normal;line-height:1.35;text-align:right;max-width:68%}
-    .feed-wrap{height:calc(100% - 62px);padding:4px 4px 0;overflow:hidden}.feed-inner{display:flex;flex-direction:column;gap:14px}.feed-inner.scrolling{animation:scrollUp 24s linear infinite}.achievement{align-items:flex-start;padding:20px}.badge{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:rgba(46,173,138,.12);font-size:24px;flex:0 0 auto}.achievement h3{margin:0;font-size:22px}.achievement p{margin:6px 0 0;color:#d8d8d8;font-size:18px;line-height:1.35}.achievement time{display:block;margin-top:10px;color:var(--muted);font-size:15px;font-weight:700}
-    .notice-grid{grid-template-columns:1fr 1fr}.notice-list{height:calc(100% - 54px);overflow:hidden}.notice-inner{display:flex;flex-direction:column;gap:14px}.notice-inner.scrolling{animation:scrollUp 22s linear infinite}.notice{align-items:flex-start;font-size:19px;line-height:1.4}.notice.high{border-color:rgba(255,77,77,.72);box-shadow:0 0 0 1px rgba(255,77,77,.12)}.notice.normal{border-color:rgba(46,173,138,.55)}.priority{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}.task-row{justify-content:space-between}.task-left{display:flex;align-items:center;gap:12px}.light{font-size:24px}.task-name{font-size:19px;font-weight:800}.task-meta{color:var(--muted);font-size:15px;font-weight:700}.task-score{font-size:19px;font-weight:800}
-    .controls{position:absolute;z-index:4;left:50%;bottom:20px;transform:translateX(-50%);display:flex;align-items:center;gap:12px;padding:8px 10px;background:rgba(13,13,13,.38);border:1px solid rgba(255,255,255,.08);border-radius:999px;backdrop-filter:blur(10px)}.dots{display:flex;align-items:center;gap:10px}.dot,.nav-btn,.pause-btn{appearance:none;border:0;font-family:inherit;color:var(--text);cursor:pointer}.dot{width:9px;height:9px;padding:0;border-radius:50%;background:rgba(255,255,255,.24);transition:.35s}.dot.active{width:28px;background:var(--accent)}.nav-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.07);font-size:28px;line-height:1;display:grid;place-items:center}.pause-btn{height:38px;padding:0 15px;border-radius:999px;background:rgba(46,173,138,.12);border:1px solid rgba(46,173,138,.35);font-size:14px;font-weight:800}.dot:hover,.nav-btn:hover,.pause-btn:hover{background:rgba(46,173,138,.22)}
-    .overlay{position:fixed;inset:0;display:none;place-items:center;background:rgba(13,13,13,.90);z-index:20;text-align:center;padding:60px}.overlay.show{display:grid}.celebrate-card{position:relative;z-index:2;max-width:1040px;padding:54px 70px;border:1px solid rgba(46,173,138,.55);border-radius:28px;background:linear-gradient(135deg,rgba(46,173,138,.18),rgba(26,26,26,.92));box-shadow:0 0 90px rgba(46,173,138,.18)}.celebrate-card h2{font-size:52px;line-height:1.05;margin:0 0 22px;font-weight:800;letter-spacing:-.06em}.celebrate-card strong{display:block;font-size:94px;line-height:.92;color:var(--accent);letter-spacing:-.075em}#confetti{position:absolute;inset:0;width:100%;height:100%;z-index:1}
-    .loading{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:var(--bg);flex-direction:column;gap:16px}.loading-inner{display:flex;flex-direction:column;align-items:center;gap:20px}.spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}.loading-text{color:var(--muted);font-size:18px;font-weight:600}
+    .card::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.045),transparent 38%);pointer-events:none}
+    .metric-grid{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:1fr 1fr 120px;gap:20px;height:100%}
+    .metric-card{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px}
+    .metric-card.wide{grid-column:1/-1;align-items:flex-start;padding:24px 34px;background:linear-gradient(110deg,rgba(46,173,138,.20),rgba(26,26,26,.94) 45%,rgba(46,173,138,.07))}
+    .metric-number{font-size:clamp(72px,8vw,148px);font-weight:800;line-height:.86;letter-spacing:-.075em}
+    .metric-label{margin-top:16px;color:var(--muted);font-size:22px;font-weight:700;text-transform:lowercase}
+    .small-note{margin-top:12px;color:var(--muted);font-size:17px;font-weight:600}
+    .accent{color:var(--accent)}.yellow{color:var(--yellow)}.red{color:var(--red)}
+    .progress{width:100%;height:10px;margin-top:20px;background:#111;border:1px solid var(--border);border-radius:99px;overflow:hidden}
+    .progress i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width 1s ease}
+    .trend{position:absolute;top:20px;right:22px;font-size:32px;font-weight:800}
+    .streak{display:flex;align-items:center;gap:16px;font-size:34px;font-weight:800;letter-spacing:-.04em}
+    .streak .fire{font-size:50px;filter:drop-shadow(0 0 18px rgba(255,217,61,.3))}
+    .sector-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;height:calc(100% - 60px)}
+    .sector-card{padding:22px 26px}.sector-top{display:flex;justify-content:space-between;align-items:center;gap:16px}
+    .sector-name{font-size:26px;font-weight:800}
+    .status{font-size:16px;font-weight:800;padding:7px 12px;border-radius:999px;background:#111;border:1px solid var(--border)}
+    .sector-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:17px;font-weight:700;margin-top:18px}
+    .sector-card blockquote{margin:16px 0 0;color:#d7d7d7;font-size:17px;font-style:italic;line-height:1.35}
+    .culture-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:20px;height:calc(100% - 60px)}
+    .panel{padding:22px 26px}.panel h2{margin:0 0 16px;font-size:22px}
+    .list{display:flex;flex-direction:column;gap:11px}
+    .person,.compact-row,.task-row,.notice,.achievement{display:flex;align-items:center;gap:13px;padding:13px 15px;background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:13px}
+    .avatar{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,rgba(46,173,138,.78),rgba(255,255,255,.08));font-weight:800;color:#fff;flex:0 0 auto;font-size:15px;object-fit:cover}
+    .person-info strong,.compact-row strong{display:block;font-size:17px}
+    .person-info span,.compact-row span{display:block;margin-top:3px;color:var(--muted);font-size:14px;font-weight:600}
+    .section-gap{margin-top:22px}
+    .today{border-color:rgba(255,217,61,.65);box-shadow:0 0 0 1px rgba(255,217,61,.15),0 0 26px rgba(255,217,61,.08);animation:pulse .9s ease-in-out infinite alternate}
+    .compact-row{justify-content:space-between}.compact-row em{color:#e8e8e8;font-style:normal;line-height:1.35;text-align:right;max-width:68%}
+    .feed-wrap{height:calc(100% - 60px);overflow:hidden}.feed-inner{display:flex;flex-direction:column;gap:13px}
+    .feed-inner.scrolling{animation:scrollUp 22s linear infinite}
+    .achievement{align-items:flex-start;padding:18px}.badge{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:rgba(46,173,138,.12);font-size:22px;flex:0 0 auto}
+    .achievement h3{margin:0;font-size:20px}.achievement p{margin:5px 0 0;color:#d8d8d8;font-size:17px;line-height:1.35}
+    .achievement time{display:block;margin-top:8px;color:var(--muted);font-size:14px;font-weight:700}
+    .notice-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;height:calc(100% - 60px)}
+    .notice-list{height:calc(100% - 52px);overflow:hidden}.notice-inner{display:flex;flex-direction:column;gap:13px}
+    .notice-inner.scrolling{animation:scrollUp 20s linear infinite}
+    .notice{align-items:flex-start;font-size:18px;line-height:1.4}
+    .notice.high{border-color:rgba(255,77,77,.72);box-shadow:0 0 0 1px rgba(255,77,77,.12)}
+    .notice.normal{border-color:rgba(46,173,138,.55)}
+    .priority{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px}
+    .task-row{justify-content:space-between}.task-left{display:flex;align-items:center;gap:11px}
+    .semaforo{font-size:22px}.task-name{font-size:18px;font-weight:800}.task-meta{color:var(--muted);font-size:14px;font-weight:700}.task-score{font-size:18px;font-weight:800}
+    .controls{position:absolute;z-index:5;left:50%;bottom:calc(var(--race) + 18px);transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:7px 10px;background:rgba(13,13,13,.42);border:1px solid rgba(255,255,255,.08);border-radius:999px;backdrop-filter:blur(10px)}
+    .dots{display:flex;align-items:center;gap:9px}.dot,.nav-btn,.pause-btn{appearance:none;border:0;font-family:inherit;color:var(--text);cursor:pointer}
+    .dot{width:8px;height:8px;padding:0;border-radius:50%;background:rgba(255,255,255,.24);transition:.35s}.dot.active{width:26px;background:var(--accent)}
+    .nav-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);font-size:26px;line-height:1;display:grid;place-items:center}
+    .pause-btn{height:36px;padding:0 14px;border-radius:999px;background:rgba(46,173,138,.12);border:1px solid rgba(46,173,138,.35);font-size:13px;font-weight:800}
+    .dot:hover,.nav-btn:hover,.pause-btn:hover{background:rgba(46,173,138,.22)}
+
+    /* ── PISTA DE CORRIDA ── */
+    .race-footer{position:absolute;z-index:4;left:42px;right:42px;bottom:14px;height:var(--race);padding:12px 20px 14px;background:linear-gradient(180deg,rgba(46,173,138,.09),rgba(18,18,18,.97));border:1px solid rgba(46,173,138,.20);border-radius:18px;box-shadow:0 -16px 60px rgba(0,0,0,.4);overflow:hidden}
+    .race-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .race-kicker{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--accent)}
+    .race-title{font-size:18px;font-weight:800;margin-top:2px}
+    .race-goal{text-align:right;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .race-goal strong{display:block;color:#fff;font-size:16px;margin-top:2px;letter-spacing:-.02em;text-transform:none}
+    .race-lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .race-lane{display:grid;grid-template-columns:80px 1fr 56px;align-items:center;gap:8px}
+    .race-person-name{font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .race-track{position:relative;height:52px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.04) 0 22px,rgba(255,255,255,.015) 22px 44px),linear-gradient(180deg,#181818,#111);overflow:visible}
+    .finish-line{position:absolute;right:8px;top:4px;width:8px;height:42px;background:conic-gradient(#fff 25%,#111 0 50%,#fff 0 75%,#111 0) 0 0/8px 8px;border-radius:2px;z-index:2}
+    .flag{position:absolute;right:2px;top:-10px;font-size:16px;z-index:3}
+
+    /* Sprite animado */
+    .runner-sprite{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      width:120px;   /* largura de 1 frame */
+      height:120px;
+      background-repeat:no-repeat;
+      background-size:480px 120px; /* spritesheet 4 frames */
+      image-rendering:pixelated;
+      transition:left 1.2s cubic-bezier(.4,0,.2,1);
+      z-index:3;
+    }
+    .runner-sprite.running{animation:spriteRun .5s steps(4) infinite}
+    .runner-sprite.done{animation:spriteCelebrate .6s steps(4) infinite}
+
+    @keyframes spriteRun{
+      from{background-position:0 0}
+      to{background-position:-480px 0}
+    }
+    @keyframes spriteCelebrate{
+      from{background-position:0 0}
+      to{background-position:-480px 0}
+    }
+
+    .runner-label{position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:900;color:#fff;background:rgba(13,13,13,.8);border:1px solid var(--border);border-radius:999px;padding:1px 5px;white-space:nowrap;z-index:4}
+    .race-score{font-size:14px;font-weight:800;text-align:right;color:var(--muted)}
+    .race-score strong{display:block;color:#fff;font-size:16px}
+    .race-lane.done .race-person-name{color:var(--accent)}
+    .race-lane.done .race-track{border-color:rgba(46,173,138,.45)}
+
+    /* ── OVERLAY ── */
+    .overlay{position:fixed;inset:0;display:none;place-items:center;background:rgba(13,13,13,.92);z-index:20;text-align:center;padding:60px}
+    .overlay.show{display:grid}
+    .celebrate-card{position:relative;z-index:2;max-width:1040px;padding:54px 70px;border:1px solid rgba(46,173,138,.55);border-radius:28px;background:linear-gradient(135deg,rgba(46,173,138,.18),rgba(26,26,26,.92));box-shadow:0 0 90px rgba(46,173,138,.18)}
+    .celebrate-card h2{font-size:52px;line-height:1.05;margin:0 0 22px;font-weight:800;letter-spacing:-.06em}
+    .celebrate-card strong{display:block;font-size:88px;line-height:.92;color:var(--accent);letter-spacing:-.075em}
+    #confetti{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+
+    /* ── LOADING ── */
+    .loading{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:var(--bg)}
+    .loading-inner{display:flex;flex-direction:column;align-items:center;gap:18px}
+    .spinner{width:46px;height:46px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+    .loading-text{color:var(--muted);font-size:17px;font-weight:600}
+
     @keyframes spin{to{transform:rotate(360deg)}}
-    @keyframes scrollUp{0%,10%{transform:translateY(0)}90%,100%{transform:translateY(calc(-50% - 7px))}}
+    @keyframes scrollUp{0%,8%{transform:translateY(0)}92%,100%{transform:translateY(calc(-50% - 7px))}}
     @keyframes pulse{from{transform:scale(1)}to{transform:scale(1.012)}}
-    @media(max-width:1100px){.app{padding:22px}.slides{inset:110px 22px 60px}.metric-grid,.sector-grid,.culture-grid,.notice-grid{grid-template-columns:1fr}.metric-grid{grid-template-rows:repeat(4,1fr) 120px}.metric-number{font-size:64px}.celebrate-card strong{font-size:58px}.celebrate-card h2{font-size:34px}}
+
+    @media(max-width:1100px){
+      :root{--race:180px}
+      .app{padding:20px 20px 0}
+      .slides{inset:106px 20px calc(var(--race) + 68px)}
+      .controls{bottom:calc(var(--race) + 14px)}
+      .race-footer{left:20px;right:20px}
+      .race-lanes{grid-template-columns:1fr}
+      .metric-grid,.sector-grid,.culture-grid,.notice-grid{grid-template-columns:1fr}
+      .metric-grid{grid-template-rows:repeat(4,1fr) 110px}
+      .metric-number{font-size:60px}
+    }
   </style>
 </head>
 <body>
   <div class="loading" id="loading">
     <div class="loading-inner">
       <div class="spinner"></div>
-      <div class="loading-text">Carregando dados da planilha...</div>
+      <div class="loading-text">Carregando dados...</div>
     </div>
   </div>
   <canvas id="stars" aria-hidden="true"></canvas>
-  <main class="app" aria-label="Painel corporativo Adapt TV">
+  <main class="app">
     <header>
-      <div class="logo" aria-label="Adapt">Adapt<span>°</span></div>
-      <div class="timebox"><div class="clock" id="clock">--:--</div><div class="date" id="dateNow"></div></div>
+      <div class="logo">Adapt<span>°</span></div>
+      <div class="timebox">
+        <div class="clock" id="clock">--:--</div>
+        <div class="date" id="dateNow"></div>
+      </div>
     </header>
     <section class="slides" id="slides" aria-live="polite"></section>
-    <nav class="controls" aria-label="Controles do carrossel">
-      <button class="nav-btn" id="prevSlide" type="button" aria-label="Tela anterior">‹</button>
+    <nav class="controls">
+      <button class="nav-btn" id="prevSlide">‹</button>
       <div class="dots" id="dots"></div>
-      <button class="nav-btn" id="nextSlideBtn" type="button" aria-label="Próxima tela">›</button>
-      <button class="pause-btn" id="pauseToggle" type="button">⏸ Pausar</button>
+      <button class="nav-btn" id="nextSlideBtn">›</button>
+      <button class="pause-btn" id="pauseToggle">⏸ Pausar</button>
     </nav>
+    <section class="race-footer" id="raceTrack"></section>
   </main>
-  <aside class="overlay" id="celebration" aria-live="assertive">
+  <aside class="overlay" id="celebration">
     <canvas id="confetti"></canvas>
-    <div class="celebrate-card"><h2>🎊 Novo cliente na família Adapt!</h2><strong id="clientName"></strong></div>
+    <div class="celebrate-card">
+      <h2>🎊 Novo cliente na família Adapt!</h2>
+      <strong id="clientName"></strong>
+    </div>
   </aside>
+
   <script>
-    // ─── CONFIGURAÇÃO ───────────────────────────────────────────────────────
+    // ── CONFIGURAÇÃO ────────────────────────────────────────────
     const SHEET_ID = "2PACX-1vR3FNNdPy3L5vUHVInG3AZ8aHLJR1gPlINPEiM3CUOYPNNV9tOxU-lmrGDDiD14jiE7Indm884blsEq";
     const GIDS = {
-      dados:       "127685924",
-      metas:       "484627818",
-      time:        "1966473143",
-      clientes:    "25534497",
-      avisos:      "782832537",
-      conquistas:  "1631520300",
-      tarefas:     "1846287854",
-      contratos:   "1550716113"
+      dados:      "127685924",
+      metas:      "484627818",
+      corrida:    "CORRIDA_GID",   // ← substituir pelo GID real da nova aba
+      time:       "1966473143",
+      clientes:   "25534497",
+      avisos:     "782832537",
+      conquistas: "1631520300",
+      tarefas:    "1846287854",
+      contratos:  "1550716113"
     };
-    const csvURL = gid => `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv&gid=${gid}`;
+    const SPRITES = {
+      wesley:  { run: "sprites/wesley_correndo.png",  celebrate: "sprites/wesley_comemorando.png"  },
+      nadia:   { run: "sprites/nadia_correndo.png",   celebrate: "sprites/nadia_comemorando.png"   },
+      evelin:  { run: "sprites/evelin_correndo.png",  celebrate: "sprites/evelin_comemorando.png"  }
+    };
+    const SPRITE_MAP = { "Wesley": "wesley", "Nádia": "nadia", "Evelin": "evelin" };
     const TIMERS = [30000, 30000, 25000, 25000, 20000];
+    const csvURL = gid => `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv&gid=${gid}`;
 
-    // ─── ESTADO ─────────────────────────────────────────────────────────────
+    // ── ESTADO ──────────────────────────────────────────────────
     let dados = null, active = 0, timerId = null, overlayOpen = false, isPaused = false;
 
-    // ─── UTILITÁRIOS ────────────────────────────────────────────────────────
+    // ── UTILS ───────────────────────────────────────────────────
     const $ = s => document.querySelector(s);
-    const fmtPct = v => (v * 100).toLocaleString("pt-BR", {minimumFractionDigits:1, maximumFractionDigits:1}) + "%";
-    const parseBR = d => { const [day,mon,yr] = d.split("/").map(Number); return new Date(yr, mon-1, day); };
+    const fmtPct = v => (v*100).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})+"%";
+    const parseBR = d => { const [day,mon,yr] = d.split("/").map(Number); return new Date(yr,mon-1,day); };
     const initials = n => n.trim().split(" ").filter(Boolean).slice(0,2).map(p=>p[0]).join("").toUpperCase();
-    const clamp = (n,a,b) => Math.max(a, Math.min(b, n));
-    const daysAgo = d => { const diff = Math.max(0, Math.round((new Date()-parseBR(d))/86400000)); return diff===0?"hoje":diff===1?"há 1 dia":`há ${diff} dias`; };
+    const clamp = (n,a,b) => Math.max(a,Math.min(b,n));
+    const daysAgo = d => { const diff=Math.max(0,Math.round((new Date()-parseBR(d))/86400000)); return diff===0?"hoje":diff===1?"há 1 dia":`há ${diff} dias`; };
     const avatar = p => p.foto && p.foto.startsWith("http")
-      ? `<img class="avatar" src="${p.foto}" alt="${p.nome}" style="object-fit:cover">`
+      ? `<img class="avatar" src="${p.foto}" alt="${p.nome}" style="border-radius:50%">`
       : `<div class="avatar">${initials(p.nome||"?")}</div>`;
-    const progress = (w, color) => `<div class="progress"><i style="width:${clamp(w*100,0,100)}%;background:${color||"var(--accent)"}"></i></div>`;
+    const bar = (w,color) => `<div class="progress"><i style="width:${clamp(w*100,0,100)}%;background:${color||"var(--accent)"}"></i></div>`;
 
-    function colorClass(v, type) {
-      if (type==="retencao") return v>=.95?"accent":v>=.90?"yellow":"red";
-      if (type==="churn")    return v<=.05?"accent":v<=.10?"yellow":"red";
+    function colorCls(v, type) {
+      if(type==="ret")   return v>=.95?"accent":v>=.90?"yellow":"red";
+      if(type==="churn") return v<=.05?"accent":v<=.10?"yellow":"red";
       return v>=1?"accent":v>=.8?"yellow":"red";
     }
     function statusFor(p) {
-      if (p>=1)  return {txt:"✅ Batida",    cls:"accent"};
-      if (p>=.8) return {txt:"⏳ Em andamento", cls:"yellow"};
-      return              {txt:"🔴 Aberta",   cls:"red"};
+      if(p>=1)  return {txt:"✅ Batida",       cls:"accent"};
+      if(p>=.8) return {txt:"⏳ Em andamento", cls:"yellow"};
+      return           {txt:"🔴 Aberta",        cls:"red"};
     }
 
-    // ─── PARSE CSV ──────────────────────────────────────────────────────────
+    // ── CSV PARSER ───────────────────────────────────────────────
     function parseCSV(text) {
       const lines = text.trim().split("\n");
-      const headers = splitCSVLine(lines[0]);
-      return lines.slice(1).map(l => {
-        const vals = splitCSVLine(l);
-        const obj = {};
-        headers.forEach((h, i) => obj[h.trim()] = (vals[i]||"").trim());
-        return obj;
-      }).filter(r => Object.values(r).some(v => v !== ""));
+      const headers = splitLine(lines[0]);
+      return lines.slice(1)
+        .map(l => {
+          const vals = splitLine(l);
+          const obj = {};
+          headers.forEach((h,i) => obj[h.trim()] = (vals[i]||"").trim());
+          return obj;
+        })
+        .filter(r => Object.values(r).some(v => v !== ""));
     }
-
-    function splitCSVLine(line) {
-      const result = []; let cur = "", inQ = false;
-      for (let i = 0; i < line.length; i++) {
-        const c = line[i];
-        if (c==='"' && !inQ) { inQ=true; continue; }
-        if (c==='"' && inQ) { if (line[i+1]==='"') { cur+='"'; i++; } else inQ=false; continue; }
-        if (c===',' && !inQ) { result.push(cur); cur=""; continue; }
-        cur += c;
+    function splitLine(line) {
+      const res=[]; let cur="", inQ=false;
+      for(let i=0;i<line.length;i++){
+        const c=line[i];
+        if(c==='"'&&!inQ){inQ=true;continue}
+        if(c==='"'&&inQ){if(line[i+1]==='"'){cur+='"';i++}else inQ=false;continue}
+        if(c===','&&!inQ){res.push(cur);cur="";continue}
+        cur+=c;
       }
-      result.push(cur);
-      return result;
+      res.push(cur);
+      return res;
     }
 
-    // ─── FETCH DE TODAS AS ABAS ─────────────────────────────────────────────
+    // ── FETCH ────────────────────────────────────────────────────
     async function fetchAba(key) {
       const r = await fetch(csvURL(GIDS[key]), {cache:"no-store"});
-      if (!r.ok) throw new Error(`Falha ao buscar aba: ${key}`);
+      if(!r.ok) throw new Error(`Falha: ${key}`);
       return parseCSV(await r.text());
     }
 
     async function carregarDados() {
-      const [dadosMes, metas, time, clientes, avisos, conquistas, tarefas, contratos] =
+      const [dadosMes, metas, corrida, time, clientes, avisos, conquistas, tarefas, contratos] =
         await Promise.all([
-          fetchAba("dados"), fetchAba("metas"), fetchAba("time"),
-          fetchAba("clientes"), fetchAba("avisos"), fetchAba("conquistas"),
-          fetchAba("tarefas"), fetchAba("contratos")
+          fetchAba("dados"), fetchAba("metas"), fetchAba("corrida"),
+          fetchAba("time"), fetchAba("clientes"), fetchAba("avisos"),
+          fetchAba("conquistas"), fetchAba("tarefas"), fetchAba("contratos")
         ]);
 
-      // Aba: Dados do Mês — estrutura chave/valor (coluna B = label, coluna C = valor)
+      // Dados do Mês: estrutura label/valor
       const kv = {};
       dadosMes.forEach(r => {
-        const chave = Object.values(r)[0] || "";
-        const valor = Object.values(r)[1] || "";
-        if (chave) kv[chave.trim()] = valor.trim();
+        const k = Object.values(r)[0]||"";
+        const v = Object.values(r)[1]||"";
+        if(k) kv[k.trim()] = v.trim();
       });
-
-      const pctParse = s => parseFloat((s||"0").replace("%","").replace(",",".")) / 100;
-      const numParse = s => parseFloat((s||"0").replace(/[^\d,.-]/g,"").replace(",",".")) || 0;
+      const pct = s => parseFloat((s||"0").replace("%","").replace(",","."))/100;
+      const num = s => parseFloat((s||"0").replace(/[^\d,.-]/g,"").replace(",","."))||0;
 
       return {
-        mes:               kv["MÊS DE REFERÊNCIA"] || "",
-        clientes_ativos:   numParse(kv["CLIENTES ATIVOS (fim do mês)"]),
-        novos_clientes:    numParse(kv["NOVOS CLIENTES NO MÊS"]),
-        meta_novos:        numParse(kv["META DE NOVOS CLIENTES"]),
-        clientes_sairam:   numParse(kv["CLIENTES QUE SAÍRAM NO MÊS"]),
-        meta_retencao:     pctParse(kv["META DE RETENÇÃO (%)"]),
-        retencao_realizada: pctParse(kv["RETENÇÃO REALIZADA (%)"]),
-        streak:            numParse(kv["STREAK DE RETENÇÃO (meses)"]),
+        mes:              kv["MÊS DE REFERÊNCIA"]||"",
+        clientes_ativos:  num(kv["CLIENTES ATIVOS (fim do mês)"]),
+        novos_clientes:   num(kv["NOVOS CLIENTES NO MÊS"]),
+        meta_novos:       num(kv["META DE NOVOS CLIENTES"]),
+        clientes_sairam:  num(kv["CLIENTES QUE SAÍRAM"]),
+        meta_retencao:    pct(kv["META DE RETENÇÃO (%)"]),
+        retencao:         pct(kv["RETENÇÃO REALIZADA (%)"]),
+        streak:           num(kv["STREAK DE RETENÇÃO (meses)"]),
 
-        metas_setor: metas.map(r => ({
-          setor:     r["SETOR"] || r[Object.keys(r)[0]],
-          meta:      numParse(r["META DO MÊS"]),
-          realizado: numParse(r["REALIZADO"]),
-          destaque:  r["DESTAQUE DO SETOR (texto livre)"] || ""
-        })).filter(r => r.setor && r.meta > 0),
+        metas_setor: metas.map(r=>({
+          setor:     r["SETOR"]||r[Object.keys(r)[0]],
+          meta:      num(r["META DO MÊS"]),
+          realizado: num(r["REALIZADO"]),
+          destaque:  r["DESTAQUE (texto livre)"]||""
+        })).filter(r=>r.setor&&r.meta>0),
 
-        time: time.filter(r => (r["ATIVO?"]||"").toLowerCase()==="sim").map(r => ({
-          nome:        r["NOME COMPLETO"] || "",
-          cargo:       r["CARGO / SETOR"] || "",
-          aniversario: r["DATA DE NASCIMENTO"] ? r["DATA DE NASCIMENTO"].slice(0,5) : "",
-          entrada:     r["DATA DE ENTRADA"] || "",
-          foto:        r["FOTO (URL)"] || ""
+        corrida: corrida.map(r=>({
+          nome:      r["VENDEDOR"]||r[Object.keys(r)[0]],
+          meta:      num(r["META DO MÊS"]),
+          realizado: num(r["REALIZADO"]),
+          obs:       r["OBSERVAÇÃO"]||""
+        })).filter(r=>r.nome&&r.meta>0),
+
+        time: time.filter(r=>(r["ATIVO?"]||"").toLowerCase()==="sim").map(r=>({
+          nome:        r["NOME COMPLETO"]||"",
+          cargo:       r["CARGO / SETOR"]||"",
+          aniversario: (r["ANIVERSÁRIO"]||"").slice(0,5),
+          entrada:     r["DATA ENTRADA"]||"",
+          foto:        r["FOTO (URL pública)"]||""
         })),
 
         novos_membros: (() => {
-          const limite = new Date(); limite.setDate(limite.getDate()-60);
-          return time.filter(r => {
-            if ((r["ATIVO?"]||"").toLowerCase() !== "sim") return false;
-            if (!r["DATA DE ENTRADA"]) return false;
-            try { return parseBR(r["DATA DE ENTRADA"]) >= limite; } catch { return false; }
-          }).map(r => ({
-            nome:    r["NOME COMPLETO"] || "",
-            cargo:   r["CARGO / SETOR"] || "",
-            entrada: r["DATA DE ENTRADA"] || "",
-            foto:    r["FOTO (URL)"] || ""
-          }));
+          const lim=new Date(); lim.setDate(lim.getDate()-60);
+          return time.filter(r=>{
+            if((r["ATIVO?"]||"").toLowerCase()!=="sim") return false;
+            try{ return parseBR(r["DATA ENTRADA"])>=lim; }catch{return false;}
+          }).map(r=>({nome:r["NOME COMPLETO"]||"",cargo:r["CARGO / SETOR"]||"",entrada:r["DATA ENTRADA"]||"",foto:r["FOTO (URL pública)"]||""}));
         })(),
 
-        clientes: clientes.filter(r => (r["STATUS"]||"").toLowerCase()==="ativo").map(r => ({
-          nome:  r["NOME DO CLIENTE"] || "",
-          inicio: r["DATA DE INÍCIO"] || ""
+        clientes: clientes.filter(r=>(r["STATUS"]||"").toLowerCase()==="ativo").map(r=>({
+          nome:  r["NOME DO CLIENTE"]||"",
+          inicio:r["DATA DE INÍCIO"]||""
         })),
 
-        avisos: avisos.filter(r => (r["ATIVO?"]||"").toLowerCase()==="sim").map(r => ({
-          texto:      r["TEXTO DO AVISO"] || "",
-          prioridade: r["PRIORIDADE"] || "Normal",
-          ativo:      true
-        })).sort((a,b) => a.prioridade==="Alta"?-1:1),
+        avisos: avisos.filter(r=>(r["ATIVO?"]||"").toLowerCase()==="sim").map(r=>({
+          texto:     r["TEXTO DO AVISO"]||"",
+          prioridade:r["PRIORIDADE"]||"Normal"
+        })).sort((a,b)=>a.prioridade==="Alta"?-1:1),
 
-        conquistas: conquistas.filter(r => (r["EXIBIR NA TV?"]||"").toLowerCase()==="sim").map(r => ({
-          tipo:  r["TIPO"] || "",
-          texto: r["DESCRIÇÃO"] || "",
-          data:  r["DATA"] || ""
+        conquistas: conquistas.filter(r=>(r["EXIBIR NA TV?"]||"").toLowerCase()==="sim").map(r=>({
+          tipo: r["TIPO"]||"",
+          texto:r["DESCRIÇÃO"]||"",
+          data: r["DATA"]||""
         })).reverse(),
 
-        tarefas: tarefas.map(r => ({
-          setor:     r["SETOR"] || r[Object.keys(r)[0]],
-          total:     numParse(r["TAREFAS NA SEMANA"]),
-          cumpridas: numParse(r["CUMPRIDAS"]),
-          atrasadas: numParse(r["ATRASADAS"])
-        })).filter(r => r.setor),
+        tarefas: tarefas.map(r=>({
+          setor:     r["SETOR"]||r[Object.keys(r)[0]],
+          total:     num(r["TAREFAS NA SEMANA"]),
+          cumpridas: num(r["CUMPRIDAS"]),
+          atrasadas: num(r["ATRASADAS"])
+        })).filter(r=>r.setor),
 
-        novos_contratos: contratos.filter(r => (r["CELEBRAR? (Sim/Não)"]||"").toLowerCase()==="sim").map(r => ({
-          cliente:    r["NOME DO CLIENTE"] || "",
-          data:       r["DATA DE ASSINATURA"] || "",
-          celebrar:   true
+        contratos: contratos.filter(r=>(r["CELEBRAR? (Sim/Não)"]||"").toLowerCase()==="sim").map(r=>({
+          cliente:r["NOME DO CLIENTE"]||"",
+          data:   r["DATA DE ASSINATURA"]||""
         }))
       };
     }
 
-    // ─── RENDERS ────────────────────────────────────────────────────────────
+    // ── RENDERS ──────────────────────────────────────────────────
     function renderPulse() {
-      const churn = 1 - dados.retencao_realizada;
-      const retCls = colorClass(dados.retencao_realizada, "retencao");
-      const chuCls = colorClass(churn, "churn");
-      const novosPct = dados.meta_novos > 0 ? dados.novos_clientes / dados.meta_novos : 0;
-      const trend = novosPct >= 1 ? "↗" : "↘";
+      const churn = 1 - dados.retencao;
+      const rCls = colorCls(dados.retencao,"ret"), cCls = colorCls(churn,"churn");
+      const nPct = dados.meta_novos>0 ? dados.novos_clientes/dados.meta_novos : 0;
+      const trend = nPct>=1?"↗":"↘";
       return `<article class="slide active"><div class="metric-grid">
         <div class="card metric-card"><div class="metric-number accent">${dados.clientes_ativos}</div><div class="metric-label">clientes ativos</div></div>
-        <div class="card metric-card"><div class="metric-number ${retCls}">${fmtPct(dados.retencao_realizada)}</div><div class="metric-label">retenção</div>${progress(dados.retencao_realizada)}</div>
-        <div class="card metric-card"><div class="metric-number ${chuCls}">${fmtPct(churn)}</div><div class="metric-label">churn</div><div class="small-note">${dados.clientes_sairam} clientes</div></div>
-        <div class="card metric-card"><div class="trend ${novosPct>=1?"accent":"yellow"}">${trend}</div><div class="metric-number ${colorClass(novosPct,"meta")}">${dados.novos_clientes}</div><div class="metric-label">novos no mês</div><div class="small-note">meta: ${dados.meta_novos}</div>${progress(novosPct)}</div>
+        <div class="card metric-card"><div class="metric-number ${rCls}">${fmtPct(dados.retencao)}</div><div class="metric-label">retenção</div>${bar(dados.retencao)}</div>
+        <div class="card metric-card"><div class="metric-number ${cCls}">${fmtPct(churn)}</div><div class="metric-label">churn</div><div class="small-note">${dados.clientes_sairam} clientes</div></div>
+        <div class="card metric-card"><div class="trend ${nPct>=1?"accent":"yellow"}">${trend}</div><div class="metric-number ${colorCls(nPct,"meta")}">${dados.novos_clientes}</div><div class="metric-label">novos no mês</div><div class="small-note">meta: ${dados.meta_novos}</div>${bar(nPct)}</div>
         <div class="card metric-card wide"><div class="streak"><span class="fire">🔥</span><span>${dados.streak} meses batendo a meta de retenção</span></div></div>
       </div></article>`;
     }
 
     function renderSectors() {
-      const cards = dados.metas_setor.map(s => {
-        const p = s.meta > 0 ? s.realizado / s.meta : 0;
-        const st = statusFor(p);
+      const cards = dados.metas_setor.map(s=>{
+        const p=s.meta>0?s.realizado/s.meta:0, st=statusFor(p);
         return `<div class="card sector-card">
           <div class="sector-top"><div class="sector-name">${s.setor}</div><div class="status ${st.cls}">${st.txt}</div></div>
           <div class="sector-meta"><span>${s.realizado}/${s.meta}</span><span>${Math.round(p*100)}%</span></div>
-          ${progress(p)}
-          <blockquote>${s.destaque || "Destaque em atualização."}</blockquote>
+          ${bar(p)}
+          <blockquote>${s.destaque||"Destaque em atualização."}</blockquote>
         </div>`;
       }).join("");
       return `<article class="slide"><h1 class="slide-title">Metas por setor <span class="subtle">• ${dados.mes}</span></h1><div class="sector-grid">${cards}</div></article>`;
     }
 
     function renderCulture() {
-      const now = new Date();
-      const mm = String(now.getMonth()+1).padStart(2,"0");
-      const dd = String(now.getDate()).padStart(2,"0");
-      const hoje = `${dd}/${mm}`;
+      const now=new Date(), mm=String(now.getMonth()+1).padStart(2,"0"), dd=String(now.getDate()).padStart(2,"0"), hoje=`${dd}/${mm}`;
+      const bdays = dados.time.filter(p=>p.aniversario&&p.aniversario.slice(3,5)===mm);
+      const parceiros = dados.clientes.filter(c=>{try{return parseBR(c.inicio).getMonth()===now.getMonth();}catch{return false;}})
+        .map(c=>({...c,anos:now.getFullYear()-parseBR(c.inicio).getFullYear()}));
 
-      const aniversariantes = dados.time.filter(p => p.aniversario && p.aniversario.slice(3,5) === mm);
-      const parceiros = dados.clientes.filter(c => {
-        try { return parseBR(c.inicio).getMonth() === now.getMonth(); } catch { return false; }
-      }).map(c => {
-        const anos = now.getFullYear() - parseBR(c.inicio).getFullYear();
-        return {...c, anos};
-      });
-
-      const birthList = aniversariantes.length
-        ? aniversariantes.map(p => {
-            const eHoje = p.aniversario === hoje;
-            return `<div class="person ${eHoje?"today":""}">${avatar(p)}<div class="person-info"><strong>${p.nome}</strong><span>${p.cargo} • ${p.aniversario}${eHoje?" 🎂 HOJE!":""}</span></div></div>`;
-          }).join("")
+      const bdayList = bdays.length
+        ? bdays.map(p=>`<div class="person ${p.aniversario===hoje?"today":""}">${avatar(p)}<div class="person-info"><strong>${p.nome}</strong><span>${p.cargo} • ${p.aniversario}${p.aniversario===hoje?" 🎂 Hoje!":""}</span></div></div>`).join("")
         : `<div class="person"><div class="person-info"><strong style="color:var(--muted)">Nenhum aniversário este mês</strong></div></div>`;
 
-      const partnerList = parceiros.length
-        ? parceiros.map(c => `<div class="person"><div class="avatar">${initials(c.nome)}</div><div class="person-info"><strong>${c.nome}</strong><span>${c.anos} ${c.anos===1?"ano":"anos"} de parceria • desde ${c.inicio.slice(0,5)}</span></div></div>`).join("")
+      const partList = parceiros.length
+        ? parceiros.map(c=>`<div class="person"><div class="avatar">${initials(c.nome)}</div><div class="person-info"><strong>${c.nome}</strong><span>${c.anos} ${c.anos===1?"ano":"anos"} de parceria • desde ${c.inicio.slice(0,5)}</span></div></div>`).join("")
         : `<div class="person"><div class="person-info"><strong style="color:var(--muted)">Nenhum aniversário de parceria este mês</strong></div></div>`;
 
-      const membrosList = dados.novos_membros.length
-        ? dados.novos_membros.map(p => `<div class="person">${avatar(p)}<div class="person-info"><strong>${p.nome}</strong><span>${p.cargo} • entrada em ${p.entrada}</span></div></div>`).join("")
+      const memList = dados.novos_membros.length
+        ? dados.novos_membros.map(p=>`<div class="person">${avatar(p)}<div class="person-info"><strong>${p.nome}</strong><span>${p.cargo} • desde ${p.entrada}</span></div></div>`).join("")
         : `<div class="person"><div class="person-info"><strong style="color:var(--muted)">Nenhum novo membro recente</strong></div></div>`;
 
-      const destaqueList = dados.metas_setor.filter(s => s.destaque)
-        .map(s => `<div class="compact-row"><strong>${s.setor}</strong><em>${s.destaque}</em></div>`).join("");
+      const destList = dados.metas_setor.filter(s=>s.destaque)
+        .map(s=>`<div class="compact-row"><strong>${s.setor}</strong><em>${s.destaque}</em></div>`).join("")
+        ||`<div class="person"><div class="person-info"><strong style="color:var(--muted)">Sem destaques cadastrados</strong></div></div>`;
 
       return `<article class="slide"><div class="culture-grid">
         <div class="card panel">
-          <h2>🎂 Aniversários do mês</h2><div class="list">${birthList}</div>
-          <h2 class="section-gap">🤝 Aniversários de parceria</h2><div class="list">${partnerList}</div>
+          <h2>🎂 Aniversários do mês</h2><div class="list">${bdayList}</div>
+          <h2 class="section-gap">🤝 Aniversários de parceria</h2><div class="list">${partList}</div>
         </div>
         <div class="card panel">
-          <h2>👋 Novos membros do time</h2><div class="list">${membrosList}</div>
-          <h2 class="section-gap">⭐ Destaque por setor</h2><div class="list">${destaqueList || '<div class="person"><div class="person-info"><strong style="color:var(--muted)">Sem destaques cadastrados</strong></div></div>'}</div>
+          <h2>👋 Novos membros</h2><div class="list">${memList}</div>
+          <h2 class="section-gap">⭐ Destaque por setor</h2><div class="list">${destList}</div>
         </div>
       </div></article>`;
     }
 
     const typeMap = {
-      "🆕 Novo Cliente":    ["🆕","var(--accent)"],
-      "🏆 Meta Batida":     ["🏆","var(--gold)"],
-      "⭐ Depoimento":      ["⭐","var(--purple)"],
-      "📋 Case Aprovado":   ["📋","var(--blue)"],
+      "🆕 Novo Cliente":     ["🆕","var(--accent)"],
+      "🏆 Meta Batida":      ["🏆","var(--gold)"],
+      "⭐ Depoimento":       ["⭐","var(--purple)"],
+      "📋 Case Aprovado":    ["📋","var(--blue)"],
       "🎉 Conquista Interna":["🎉","var(--accent)"]
     };
-    function achCard(c) {
-      const t = typeMap[c.tipo] || ["✨","var(--accent)"];
-      return `<div class="achievement card"><div class="badge" style="color:${t[1]};border:1px solid ${t[1]}33">${t[0]}</div><div><h3>${c.tipo.replace(/^[^\s]+\s/,"")}</h3><p>${c.texto}</p><time>${c.data ? daysAgo(c.data) : ""}</time></div></div>`;
-    }
     function renderAchievements() {
-      if (!dados.conquistas.length)
+      if(!dados.conquistas.length)
         return `<article class="slide"><h1 class="slide-title">🏆 Mural de Conquistas</h1><div class="feed-wrap"><div class="feed-inner"><div class="achievement card"><div class="person-info"><strong style="color:var(--muted)">Nenhuma conquista cadastrada ainda</strong></div></div></div></div></article>`;
-      const cards = dados.conquistas.map(achCard).join("");
-      const scroll = dados.conquistas.length > 4;
+      const cards = dados.conquistas.map(c=>{
+        const t=typeMap[c.tipo]||["✨","var(--accent)"];
+        return `<div class="achievement card"><div class="badge" style="color:${t[1]};border:1px solid ${t[1]}33">${t[0]}</div><div><h3>${c.tipo.replace(/^[^\s]+\s/,"")}</h3><p>${c.texto}</p><time>${c.data?daysAgo(c.data):""}</time></div></div>`;
+      }).join("");
+      const scroll = dados.conquistas.length>4;
       return `<article class="slide"><h1 class="slide-title">🏆 Mural de Conquistas</h1><div class="feed-wrap"><div class="feed-inner ${scroll?"scrolling":""}">${cards}${scroll?cards:""}</div></div></article>`;
     }
 
     function renderNotices() {
-      const noticeCards = dados.avisos.map(a =>
-        `<div class="notice ${a.prioridade==="Alta"?"high":"normal"}"><div><div class="priority">${a.prioridade}</div>${a.texto}</div></div>`
-      ).join("");
-      const taskCards = dados.tarefas.map(t => {
-        const sem = t.atrasadas===0?"🟢":t.atrasadas<=2?"🟡":"🔴";
-        return `<div class="task-row"><div class="task-left"><span class="light">${sem}</span><div><div class="task-name">${t.setor}</div><div class="task-meta">${t.atrasadas} atrasadas</div></div></div><div class="task-score">${t.cumpridas}/${t.total}</div></div>`;
-      }).join("");
+      const nCards = dados.avisos.map(a=>`<div class="notice ${a.prioridade==="Alta"?"high":"normal'}"><div><div class="priority">${a.prioridade}</div>${a.texto}</div></div>`).join("")
+        ||`<div class="notice normal">Sem avisos no momento.</div>`;
+      const tCards = dados.tarefas.map(t=>{
+        const s=t.atrasadas===0?"🟢":t.atrasadas<=2?"🟡":"🔴";
+        return `<div class="task-row"><div class="task-left"><span class="semaforo">${s}</span><div><div class="task-name">${t.setor}</div><div class="task-meta">${t.atrasadas} atrasadas</div></div></div><div class="task-score">${t.cumpridas}/${t.total}</div></div>`;
+      }).join("")||`<div class="task-row">Sem dados de tarefas.</div>`;
       return `<article class="slide"><div class="notice-grid">
-        <div class="card panel"><h2>📣 Avisos</h2><div class="notice-list"><div class="notice-inner ${dados.avisos.length>3?"scrolling":""}">${noticeCards||'<div class="notice normal">Sem avisos no momento.</div>'}${dados.avisos.length>3?noticeCards:""}</div></div></div>
-        <div class="card panel"><h2>📋 Situação das Tarefas</h2><div class="list">${taskCards||'<div class="task-row">Sem dados de tarefas.</div>'}</div></div>
+        <div class="card panel"><h2>📣 Avisos</h2><div class="notice-list"><div class="notice-inner ${dados.avisos.length>3?"scrolling":""}">${nCards}${dados.avisos.length>3?nCards:""}</div></div></div>
+        <div class="card panel"><h2>📋 Situação das Tarefas</h2><div class="list">${tCards}</div></div>
       </div></article>`;
     }
 
-    // ─── CONTROLE DO CARROSSEL ───────────────────────────────────────────────
+    // ── PISTA DE CORRIDA COM SPRITES ────────────────────────────
+    function renderRace() {
+      if(!dados.corrida||!dados.corrida.length) return;
+      const metaTotal = dados.corrida.reduce((s,c)=>s+c.meta,0);
+      const realkTotal = dados.corrida.reduce((s,c)=>s+c.realizado,0);
+
+      const lanes = dados.corrida.map(c=>{
+        const pct  = c.meta>0 ? c.realizado/c.meta : 0;
+        const done = pct>=1;
+        const key  = SPRITE_MAP[c.nome];
+        const sp   = key ? SPRITES[key] : null;
+
+        // posição: de 5% (início) até 78% (antes da linha de chegada)
+        const leftPct = done ? 78 : clamp(pct*78, 5, 78);
+
+        const spriteStyle = sp
+          ? `background-image:url('${done?sp.celebrate:sp.run}');left:calc(${leftPct}% - 60px)`
+          : `left:calc(${leftPct}% - 23px)`;
+
+        const spriteEl = sp
+          ? `<div class="runner-sprite ${done?"done":"running'}" style="${spriteStyle}"><span class="runner-label">${Math.round(pct*100)}%</span></div>`
+          : `<div class="runner-sprite ${done?"done":"running"}" style="left:calc(${leftPct}% - 23px);width:46px;height:46px;background:var(--accent);border-radius:50%;display:grid;place-items:center;font-size:22px">${done?"🎉":"🏃"}<span class="runner-label">${Math.round(pct*100)}%</span></div>`;
+
+        return `<div class="race-lane ${done?"done":"'}">
+          <div class="race-person-name">${c.nome}</div>
+          <div class="race-track">
+            <div class="finish-line"></div>
+            <span class="flag">🏁</span>
+            ${spriteEl}
+          </div>
+          <div class="race-score"><strong>${c.realizado}/${c.meta}</strong>${done?"🏆":""}</div>
+        </div>`;
+      }).join("");
+
+      document.getElementById("raceTrack").innerHTML = `
+        <div class="race-header">
+          <div><div class="race-kicker">🏁 Comercial</div><div class="race-title">Corrida de Metas — ${dados.mes}</div></div>
+          <div class="race-goal">Time comercial<strong>${realkTotal}/${metaTotal} contratos</strong></div>
+        </div>
+        <div class="race-lanes">${lanes}</div>`;
+    }
+
+    // ── CARROSSEL ────────────────────────────────────────────────
     function render() {
       $("#slides").innerHTML = [renderPulse(),renderSectors(),renderCulture(),renderAchievements(),renderNotices()].join("");
-      $("#dots").innerHTML = TIMERS.map((_,i) => `<button class="dot ${i===active?"active":""}" type="button" aria-label="Tela ${i+1}"></button>`).join("");
-      document.querySelectorAll(".dot").forEach((d,i) => d.onclick = () => goToSlide(i, true));
+      $("#dots").innerHTML = TIMERS.map((_,i)=>`<button class="dot ${i===active?"active":""}">${""}</button>`).join("");
+      document.querySelectorAll(".dot").forEach((d,i)=>d.onclick=()=>goTo(i,true));
       updateActive();
+      renderRace();
       checkCelebration();
     }
     function updateActive() {
-      document.querySelectorAll(".slide").forEach((s,i) => s.classList.toggle("active", i===active));
-      document.querySelectorAll(".dot").forEach((d,i) => d.classList.toggle("active", i===active));
-      const b = $("#pauseToggle"); if(b) b.textContent = isPaused?"▶ Retomar":"⏸ Pausar";
+      document.querySelectorAll(".slide").forEach((s,i)=>s.classList.toggle("active",i===active));
+      document.querySelectorAll(".dot").forEach((d,i)=>d.classList.toggle("active",i===active));
+      const b=$("#pauseToggle"); if(b) b.textContent=isPaused?"▶ Retomar":"⏸ Pausar";
     }
-    function goToSlide(i, manual=false) { if(overlayOpen) return; active=(i+TIMERS.length)%TIMERS.length; updateActive(); if(!manual||!isPaused) scheduleNext(); }
-    function scheduleNext() { clearTimeout(timerId); if(isPaused||overlayOpen) return; timerId=setTimeout(()=>goToSlide(active+1),TIMERS[active]); }
-    function setPaused(v) { isPaused=v; clearTimeout(timerId); if(!isPaused&&!overlayOpen) scheduleNext(); const b=$("#pauseToggle"); if(b) b.textContent=isPaused?"▶ Retomar":"⏸ Pausar"; }
+    function goTo(i,manual=false) { if(overlayOpen) return; active=(i+TIMERS.length)%TIMERS.length; updateActive(); if(!manual||!isPaused) scheduleNext(); }
+    function scheduleNext() { clearTimeout(timerId); if(isPaused||overlayOpen) return; timerId=setTimeout(()=>goTo(active+1),TIMERS[active]); }
+    function setPaused(v) { isPaused=v; clearTimeout(timerId); if(!isPaused&&!overlayOpen) scheduleNext(); updateActive(); }
 
-    // ─── CELEBRAÇÃO ─────────────────────────────────────────────────────────
+    // ── CELEBRAÇÃO ───────────────────────────────────────────────
     function checkCelebration() {
-      const next = dados.novos_contratos.find(c => c.celebrar);
-      if (!next) return;
-      const key = `adaptCelebrated:${next.cliente}|${next.data}`;
-      if (sessionStorage.getItem(key)) return;
-      sessionStorage.setItem(key, "1");
-      setTimeout(() => showCelebration(next.cliente), 900);
+      const next=dados.contratos&&dados.contratos[0];
+      if(!next) return;
+      const key=`adaptCel:${next.cliente}|${next.data}`;
+      if(sessionStorage.getItem(key)) return;
+      sessionStorage.setItem(key,"1");
+      setTimeout(()=>showCelebration(next.cliente),900);
     }
     function showCelebration(client) {
       overlayOpen=true; clearTimeout(timerId);
       $("#clientName").textContent=client;
       $("#celebration").classList.add("show");
       startConfetti();
-      setTimeout(() => { $("#celebration").classList.remove("show"); stopConfetti(); overlayOpen=false; scheduleNext(); }, 15000);
+      setTimeout(()=>{ $("#celebration").classList.remove("show"); stopConfetti(); overlayOpen=false; scheduleNext(); },15000);
     }
-    let confettiTimer=null;
+    let confettiRAF=null;
     function startConfetti() {
-      const canvas=$("#confetti"), ctx=canvas.getContext("2d"), colors=["#2EAD8A","#FFD93D","#FF4D4D","#B993FF","#6BB6FF"];
+      const cv=$("#confetti"),ctx=cv.getContext("2d"),colors=["#2EAD8A","#FFD93D","#FF4D4D","#B993FF","#6BB6FF"];
       let w,h,p=[];
-      const size=()=>{w=canvas.width=innerWidth;h=canvas.height=innerHeight}; size();
+      const sz=()=>{w=cv.width=innerWidth;h=cv.height=innerHeight}; sz();
       p=Array.from({length:180},()=>({x:Math.random()*w,y:-Math.random()*h,r:4+Math.random()*7,c:colors[Math.floor(Math.random()*colors.length)],v:2+Math.random()*4,a:Math.random()*Math.PI}));
-      const draw=()=>{ctx.clearRect(0,0,w,h);p.forEach(o=>{o.y+=o.v;o.x+=Math.sin(o.a+=.03)*1.8;if(o.y>h+20){o.y=-20;o.x=Math.random()*w}ctx.save();ctx.translate(o.x,o.y);ctx.rotate(o.a);ctx.fillStyle=o.c;ctx.fillRect(-o.r/2,-o.r/2,o.r,o.r*.55);ctx.restore()});confettiTimer=requestAnimationFrame(draw)}; draw();
+      const draw=()=>{ctx.clearRect(0,0,w,h);p.forEach(o=>{o.y+=o.v;o.x+=Math.sin(o.a+=.03)*1.8;if(o.y>h+20){o.y=-20;o.x=Math.random()*w}ctx.save();ctx.translate(o.x,o.y);ctx.rotate(o.a);ctx.fillStyle=o.c;ctx.fillRect(-o.r/2,-o.r/2,o.r,o.r*.55);ctx.restore()});confettiRAF=requestAnimationFrame(draw)};draw();
     }
-    function stopConfetti() { cancelAnimationFrame(confettiTimer); const c=$("#confetti"); c.getContext("2d").clearRect(0,0,c.width,c.height); }
+    function stopConfetti() { cancelAnimationFrame(confettiRAF); const c=$("#confetti"); c.getContext("2d").clearRect(0,0,c.width,c.height); }
 
-    // ─── ESTRELAS ───────────────────────────────────────────────────────────
+    // ── ESTRELAS ─────────────────────────────────────────────────
     function startStars() {
-      const canvas=$("#stars"), ctx=canvas.getContext("2d"); let w,h,stars=[];
-      const make=()=>{w=canvas.width=innerWidth;h=canvas.height=innerHeight;stars=Array.from({length:70},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.7+.35,a:.06+Math.random()*.14,s:.08+Math.random()*.22}))};
-      make(); addEventListener("resize",make);
-      const anim=()=>{ctx.clearRect(0,0,w,h);for(const st of stars){st.y+=st.s;if(st.y>h)st.y=0;ctx.beginPath();ctx.arc(st.x,st.y,st.r,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${st.a})`;ctx.fill()}requestAnimationFrame(anim)}; anim();
+      const cv=$("#stars"),ctx=cv.getContext("2d"); let w,h,st=[];
+      const mk=()=>{w=cv.width=innerWidth;h=cv.height=innerHeight;st=Array.from({length:70},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.7+.35,a:.06+Math.random()*.14,s:.08+Math.random()*.22}))};
+      mk(); addEventListener("resize",mk);
+      const anim=()=>{ctx.clearRect(0,0,w,h);for(const s of st){s.y+=s.s;if(s.y>h)s.y=0;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${s.a})`;ctx.fill()}requestAnimationFrame(anim)};anim();
     }
 
-    // ─── RELÓGIO ────────────────────────────────────────────────────────────
+    // ── RELÓGIO ──────────────────────────────────────────────────
     function updateClock() {
-      const now = new Date();
-      $("#clock").textContent = now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-      $("#dateNow").textContent = now.toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
+      const now=new Date();
+      $("#clock").textContent=now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+      $("#dateNow").textContent=now.toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
     }
 
-    // ─── REFRESH AUTOMÁTICO ─────────────────────────────────────────────────
+    // ── REFRESH ──────────────────────────────────────────────────
     async function refreshData() {
       try {
         dados = await carregarDados();
         render();
-        $("#loading").style.display = "none";
+        $("#loading").style.display="none";
       } catch(e) {
         console.error("Erro ao carregar dados:", e);
-        if (!dados) {
-          $("#loading").querySelector(".loading-text").textContent = "Erro ao carregar. Verifique a conexão.";
-        }
+        if(!dados) $("#loading").querySelector(".loading-text").textContent="Erro ao carregar. Verifique a conexão.";
       }
     }
 
-    // ─── INIT ────────────────────────────────────────────────────────────────
-    $("#prevSlide").onclick = () => goToSlide(active-1, true);
-    $("#nextSlideBtn").onclick = () => goToSlide(active+1, true);
-    $("#pauseToggle").onclick = () => setPaused(!isPaused);
-    document.addEventListener("keydown", e => {
-      if(e.key==="ArrowLeft") goToSlide(active-1,true);
-      if(e.key==="ArrowRight") goToSlide(active+1,true);
-      if(e.code==="Space") { e.preventDefault(); setPaused(!isPaused); }
+    // ── INIT ─────────────────────────────────────────────────────
+    $("#prevSlide").onclick   = ()=>goTo(active-1,true);
+    $("#nextSlideBtn").onclick = ()=>goTo(active+1,true);
+    $("#pauseToggle").onclick  = ()=>setPaused(!isPaused);
+    document.addEventListener("keydown",e=>{
+      if(e.key==="ArrowLeft")  goTo(active-1,true);
+      if(e.key==="ArrowRight") goTo(active+1,true);
+      if(e.code==="Space"){e.preventDefault();setPaused(!isPaused);}
     });
 
     startStars();
-    updateClock(); setInterval(updateClock, 1000);
-    refreshData(); setInterval(refreshData, 300000);
+    updateClock(); setInterval(updateClock,1000);
+    refreshData(); setInterval(refreshData,300000);
   </script>
 </body>
 </html>
