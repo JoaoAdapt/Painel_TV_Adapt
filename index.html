@@ -119,17 +119,23 @@
       contain:layout paint;
     }
     .runner-sprite.running{animation:spriteRun .62s steps(4) infinite}
-    .runner-sprite.done{animation:spriteCelebrate .9s steps(4) infinite}
+    /* Quando bate a meta, a pista fica com uma pose final estática.
+       Isso evita aparecer dois frames ao mesmo tempo ou parecer que o personagem voltou a correr. */
+    .runner-sprite.done{animation:none;background-position:-228px 0}
 
     @keyframes spriteRun{from{background-position:0 0}to{background-position:-304px 0}}
-    @keyframes spriteCelebrate{from{background-position:0 0}to{background-position:-304px 0}}
 
     /* ── OVERLAY ── */
     .overlay{position:fixed;inset:0;display:none;place-items:center;background:rgba(13,13,13,.92);z-index:20;text-align:center;padding:60px}
     .overlay.show{display:grid}
     .celebrate-card{position:relative;z-index:2;max-width:1040px;padding:54px 70px;border:1px solid rgba(46,173,138,.55);border-radius:28px;background:linear-gradient(135deg,rgba(46,173,138,.18),rgba(26,26,26,.92));box-shadow:0 0 90px rgba(46,173,138,.18)}
+    .celebrate-card.goal-mode{min-width:min(920px,90vw);padding-top:34px}
     .celebrate-card h2{font-size:52px;line-height:1.05;margin:0 0 22px;font-weight:800;letter-spacing:-.06em}
     .celebrate-card strong{display:block;font-size:88px;line-height:.92;color:var(--accent);letter-spacing:-.075em}
+    .celebrate-card p{margin:22px 0 0;color:#d8d8d8;font-size:24px;font-weight:800}
+    .celebrate-hero{display:none;margin:0 auto 8px;min-height:0}
+    .celebrate-hero.show{display:grid;place-items:center;min-height:250px}
+    .goal-sprite{width:240px;height:240px;background-repeat:no-repeat;background-size:960px 240px;background-position:-720px 0;image-rendering:pixelated;filter:drop-shadow(0 24px 28px rgba(0,0,0,.45)) drop-shadow(0 0 24px rgba(255,211,110,.25));animation:goalPop 1s ease-in-out infinite alternate}
     #confetti{position:absolute;inset:0;width:100%;height:100%;z-index:1}
 
     /* ── LOADING ── */
@@ -141,6 +147,7 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     @keyframes scrollUp{0%,8%{transform:translateY(0)}92%,100%{transform:translateY(calc(-50% - 7px))}}
     @keyframes pulse{from{transform:scale(1)}to{transform:scale(1.012)}}
+    @keyframes goalPop{from{transform:translateY(0) scale(1)}to{transform:translateY(-8px) scale(1.06)}}
 
     @media(max-width:1100px){
       :root{--race:180px}
@@ -182,9 +189,11 @@
   </main>
   <aside class="overlay" id="celebration">
     <canvas id="confetti"></canvas>
-    <div class="celebrate-card">
-      <h2>🎊 Novo cliente na família Adapt!</h2>
+    <div class="celebrate-card" id="celebrateCard">
+      <div class="celebrate-hero" id="celebrateHero"></div>
+      <h2 id="celebrateTitle">🎊 Novo cliente na família Adapt!</h2>
       <strong id="clientName"></strong>
+      <p id="celebrateSubtitle"></p>
     </div>
   </aside>
 
@@ -213,6 +222,7 @@
 
     // ── ESTADO ──────────────────────────────────────────────────
     let dados = null, active = 0, timerId = null, overlayOpen = false, isPaused = false;
+    let celebrationQueue = [];
 
     // ── UTILS ───────────────────────────────────────────────────
     const $ = s => document.querySelector(s);
@@ -236,12 +246,32 @@
       : `<div class="avatar">${initials(p.nome||"?")}</div>`;
     const bar = (w,color) => `<div class="progress"><i style="width:${clamp(w*100,0,100)}%;background:${color||"var(--accent)"}"></i></div>`;
 
+    function clearRaceCache() {
+      try {
+        Object.keys(localStorage)
+          .filter(k => k.startsWith("adaptRace:") || k.startsWith("adaptRaceV4:"))
+          .forEach(k => localStorage.removeItem(k));
+      } catch {}
+    }
+
     function estabilizarCorrida(corrida, mes) {
-      // A publicação CSV do Google Sheets pode entregar uma versão antiga por alguns segundos.
-      // Como contratos do comercial não deveriam diminuir no mês, seguramos o maior realizado por pessoa.
-      const cacheKey = `adaptRace:${normKey(mes||"atual")}`;
+      // A publicação CSV do Google Sheets às vezes entrega uma versão antiga por cache.
+      // Para evitar o personagem voltar na pista, seguramos o maior número DENTRO DO MESMO MÊS.
+      // Ao trocar o campo "MÊS DE REFERÊNCIA" na planilha, a chave muda e a corrida pode começar do zero.
+      if(new URLSearchParams(location.search).has("resetRace")) clearRaceCache();
+
+      const mesKey = normKey(mes || "atual");
+      const activeMonthKey = "adaptRaceV4:activeMonth";
+      const prevMonth = localStorage.getItem(activeMonthKey);
+      if(prevMonth && prevMonth !== mesKey) {
+        clearRaceCache();
+      }
+      try { localStorage.setItem(activeMonthKey, mesKey); } catch {}
+
+      const cacheKey = `adaptRaceV4:${mesKey}`;
       let cache = {};
       try { cache = JSON.parse(localStorage.getItem(cacheKey)||"{}"); } catch { cache = {}; }
+
       const nextCache = {};
       const out = corrida.map(c=>{
         const key = normKey(c.nome);
@@ -269,8 +299,17 @@
 
     // ── CSV PARSER ───────────────────────────────────────────────
     // Parser robusto para CSV publicado pelo Sheets: suporta aspas, vírgulas e quebras de linha dentro das células.
-    const KNOWN_HEADERS = ["CAMPO","SETOR","VENDEDOR","NOME COMPLETO","NOME DO CLIENTE",
-      "TEXTO DO AVISO","TIPO","MES DE REFERENCIA","CELEBRAR","EXIBIR NA TV"];
+    const KNOWN_HEADERS = [
+      "CAMPO","MÉTRICA","METRICA","VALOR","VALOR (preencha aqui)",
+      "SETOR","META DO MÊS","META DO MES","META","REALIZADO","FEITO","RESULTADO","DESTAQUE",
+      "VENDEDOR","NOME","COMERCIAL","CONTRATOS","FECHADOS","OBSERVAÇÃO","OBSERVACAO","OBS",
+      "NOME COMPLETO","CARGO / SETOR","CARGO","ANIVERSÁRIO","ANIVERSARIO","DATA ENTRADA","ENTRADA","FOTO (URL pública)","FOTO",
+      "NOME DO CLIENTE","CLIENTE","DATA DE INÍCIO","DATA DE INICIO","INÍCIO","INICIO","STATUS","ATIVO?","ATIVO",
+      "TEXTO DO AVISO","AVISO","TEXTO","PRIORIDADE",
+      "TIPO","CATEGORIA","DESCRIÇÃO","DESCRICAO","CONQUISTA","DATA","DATA DA CONQUISTA","EXIBIR NA TV?","EXIBIR NA TV","EXIBIR","TV","PUBLICAR",
+      "TAREFAS NA SEMANA","TOTAL","TAREFAS","CUMPRIDAS","CONCLUÍDAS","CONCLUIDAS","ATRASADAS","EM ATRASO",
+      "CELEBRAR? (Sim/Não)","CELEBRAR?","CELEBRAR","DATA DE ASSINATURA"
+    ];
 
     const normKey = v => String(v||"")
       .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
@@ -319,10 +358,28 @@
     function parseCSV(text) {
       const rows = parseCSVRows(text);
       if(!rows.length) return [];
-      let headerIdx = 0;
-      for(let i=0;i<Math.min(rows.length,12);i++){
-        const cols = rows[i].map(normKey);
-        if(KNOWN_HEADERS.some(h=>cols.some(c=>c===h||c.startsWith(h)))) { headerIdx=i; break; }
+
+      // Detecta a linha real de cabeçalho. Importante: não pode usar startsWith("TIPO"),
+      // porque a linha decorativa "Tipos válidos..." do Mural virava cabeçalho por engano.
+      const known = new Set(KNOWN_HEADERS.map(normKey));
+      const scoreHeader = cols => {
+        const filled = cols.map(normKey).filter(Boolean);
+        const exact = filled.filter(c => known.has(c)).length;
+        const hasTipo = filled.includes("TIPO") || filled.includes("CATEGORIA");
+        const hasTexto = filled.includes("DESCRICAO") || filled.includes("CONQUISTA") || filled.includes("TEXTO");
+        const hasData = filled.includes("DATA") || filled.includes("DATA DA CONQUISTA");
+        const hasCampoValor = filled.includes("CAMPO") && filled.some(c=>c==="VALOR" || c.includes("VALOR"));
+        const hasMeta = filled.includes("SETOR") && (filled.includes("REALIZADO") || filled.some(c=>c.includes("META")));
+        const hasRace = (filled.includes("VENDEDOR") || filled.includes("COMERCIAL")) && (filled.includes("REALIZADO") || filled.includes("CONTRATOS"));
+        const hasTasks = filled.includes("SETOR") && (filled.includes("TAREFAS") || filled.includes("CUMPRIDAS"));
+        const strongPattern = (hasTipo && (hasTexto || hasData)) || hasCampoValor || hasMeta || hasRace || hasTasks;
+        return exact + (strongPattern ? 4 : 0);
+      };
+
+      let headerIdx = 0, bestScore = -1;
+      for(let i=0;i<Math.min(rows.length,15);i++){
+        const score = scoreHeader(rows[i]);
+        if(score > bestScore){ bestScore = score; headerIdx = i; }
       }
       const headers = rows[headerIdx].map(h=>String(h||"").trim().replace(/\r|\n/g," "));
       return rows.slice(headerIdx+1)
@@ -608,6 +665,8 @@
           <div class="race-total">Time: <strong>${realTotal}/${metaTotal}</strong> contratos (${pctTotal}%)</div>
         </div>
         <div class="race-lanes">${lanes}</div>`;
+
+      checkRaceGoalCelebrations();
     }
 
     // ── CARROSSEL ────────────────────────────────────────────────
@@ -629,20 +688,72 @@
     function setPaused(v) { isPaused=v; clearTimeout(timerId); if(!isPaused&&!overlayOpen) scheduleNext(); updateActive(); }
 
     // ── CELEBRAÇÃO ───────────────────────────────────────────────
+    function queueCelebration(item) {
+      if(overlayOpen) { celebrationQueue.push(item); return; }
+      showCelebration(item);
+    }
+
     function checkCelebration() {
       const next=dados.contratos&&dados.contratos[0];
       if(!next) return;
       const key=`adaptCel:${next.cliente}|${next.data}`;
       if(sessionStorage.getItem(key)) return;
       sessionStorage.setItem(key,"1");
-      setTimeout(()=>showCelebration(next.cliente),900);
+      setTimeout(()=>queueCelebration({
+        mode:"client",
+        title:"🎊 Novo cliente na família Adapt!",
+        strong:next.cliente,
+        subtitle:"",
+        sprite:""
+      }),900);
     }
-    function showCelebration(client) {
+
+    function checkRaceGoalCelebrations() {
+      if(!dados || !dados.corrida || !dados.corrida.length) return;
+      const mesKey = normKey(dados.mes || "atual");
+      dados.corrida.forEach(c=>{
+        if(!c.meta || c.realizado < c.meta) return;
+        const key = `adaptRaceGoalV2:${mesKey}:${normKey(c.nome)}:${c.meta}`;
+        if(localStorage.getItem(key)) return;
+        try { localStorage.setItem(key,"1"); } catch {}
+        const spriteKey = SPRITE_MAP[normKey(c.nome)];
+        const sp = spriteKey ? SPRITES[spriteKey] : null;
+        queueCelebration({
+          mode:"goal",
+          title:"🏆 Meta batida no Comercial!",
+          strong:c.nome,
+          subtitle:`${c.realizado}/${c.meta} contratos em ${dados.mes || "este mês"}`,
+          sprite:sp ? sp.celebrate : ""
+        });
+      });
+    }
+
+    function showCelebration(item) {
       overlayOpen=true; clearTimeout(timerId);
-      $("#clientName").textContent=client;
+      const card=$("#celebrateCard"), hero=$("#celebrateHero"), title=$("#celebrateTitle"), name=$("#clientName"), subtitle=$("#celebrateSubtitle");
+      card.classList.toggle("goal-mode", item.mode==="goal");
+      title.textContent = item.title || "🎉 Conquista!";
+      name.textContent = item.strong || "";
+      subtitle.textContent = item.subtitle || "";
+      if(item.sprite) {
+        hero.classList.add("show");
+        hero.innerHTML = `<div class="goal-sprite" style="background-image:url('${item.sprite}')"></div>`;
+      } else {
+        hero.classList.remove("show");
+        hero.innerHTML = "";
+      }
       $("#celebration").classList.add("show");
       startConfetti();
-      setTimeout(()=>{ $("#celebration").classList.remove("show"); stopConfetti(); overlayOpen=false; scheduleNext(); },15000);
+      setTimeout(finishCelebration, item.mode==="goal" ? 9000 : 15000);
+    }
+
+    function finishCelebration() {
+      $("#celebration").classList.remove("show");
+      stopConfetti();
+      overlayOpen=false;
+      const next = celebrationQueue.shift();
+      if(next) setTimeout(()=>showCelebration(next),500);
+      else scheduleNext();
     }
     let confettiRAF=null;
     function startConfetti() {
