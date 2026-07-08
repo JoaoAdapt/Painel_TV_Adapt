@@ -106,18 +106,18 @@
       position:absolute;
       top:50%;
       transform:translate(-50%,-50%);
-      width:80px;
-      height:80px;
+      width:110px;
+      height:110px;
       background-repeat:no-repeat;
-      background-size:320px 80px;
+      background-size:440px 110px;
       image-rendering:pixelated;
       transition:left 1.2s cubic-bezier(.4,0,.2,1);
       z-index:3;
     }
     .runner-sprite.running{animation:spriteRun .55s steps(4) infinite}
-    .runner-sprite.done{background-position:-240px 0 !important;animation:none}
+    .runner-sprite.done{background-position:-330px 0 !important;animation:none}
 
-    @keyframes spriteRun{from{background-position:0 0}to{background-position:-320px 0}}
+    @keyframes spriteRun{from{background-position:0 0}to{background-position:-440px 0}}
 
     /* ── OVERLAY ── */
     .overlay{position:fixed;inset:0;display:none;place-items:center;background:rgba(13,13,13,.92);z-index:20;text-align:center;padding:60px}
@@ -348,7 +348,8 @@
         conquistas: conquistas.filter(r=>{
           const exibir = r["EXIBIR NA TV?"] || r["EXIBIR NA\nTV?"] || r["EXIBIR NA TV"] || 
                          Object.entries(r).find(([k])=>k.includes("EXIBIR"))?.[1] || "";
-          return exibir.toLowerCase()==="sim";
+          const exibirLow = exibir.toLowerCase().trim();
+          return exibirLow==="sim" || exibirLow==="exibir" || exibirLow==="s" || exibirLow==="yes";
         }).map(r=>({
           tipo: (r["TIPO"] || Object.entries(r).find(([k])=>k.trim()==="TIPO")?.[1] || "").trim(),
           texto:(r["DESCRIÇÃO"] || r["DESCRICAO"] || Object.entries(r).find(([k])=>k.includes("ESCRI"))?.[1] || "").trim(),
@@ -487,7 +488,7 @@
 
         // Posição: sprite se move de 4% até 88%
         // done=false: proporcional à %, done=true: encosta na linha
-        const leftPct = done ? 88 : clamp(pct*86, 4, 86);
+        const leftPct = done ? 105 : clamp(pct*84, 4, 84);
 
         const spriteEl = sp
           ? `<div class="runner-sprite ${done?"done":"running"}" 
@@ -590,10 +591,32 @@
     }
 
     // ── REFRESH ──────────────────────────────────────────────────
+    let lastCorridaHash = "";
+    function corridaHash(corrida) {
+      return JSON.stringify(corrida.map(c=>({n:c.nome,r:c.realizado,m:c.meta})));
+    }
+
     async function refreshData() {
       try {
-        dados = await carregarDados();
-        render();
+        const novosDados = await carregarDados();
+        const newHash = corridaHash(novosDados.corrida||[]);
+        const corridaMudou = newHash !== lastCorridaHash;
+
+        dados = novosDados;
+
+        if(corridaMudou) {
+          lastCorridaHash = newHash;
+          render(); // re-renderiza tudo (inclui pista)
+        } else {
+          // Só atualiza slides e dados, NÃO recria a pista (evita tremido)
+          const slidesEl = $("#slides");
+          if(slidesEl) {
+            slidesEl.innerHTML = [renderPulse(),renderSectors(),renderCulture(),renderAchievements(),renderNotices()].join("");
+            document.querySelectorAll(".dot").forEach((d,i)=>d.onclick=()=>goTo(i,true));
+            updateActive();
+            checkCelebration();
+          }
+        }
         $("#loading").style.display="none";
       } catch(e) {
         console.error("Erro ao carregar dados:", e);
