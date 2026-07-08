@@ -106,7 +106,7 @@
       z-index:3;
     }
     .runner-sprite.running{animation:spriteRun .5s steps(4) infinite}
-    .runner-sprite.done{animation:spriteCelebrate .6s steps(4) infinite}
+    .runner-sprite.done{background-position:-360px 0 !important;animation:none}
 
     @keyframes spriteRun{
       from{background-position:0 0}
@@ -287,12 +287,14 @@
           fetchAba("conquistas"), fetchAba("tarefas"), fetchAba("contratos")
         ]);
 
-      // Dados do Mês: estrutura label/valor
+      // Dados do Mês: estrutura label/valor — col B=campo, col C=valor
       const kv = {};
       dadosMes.forEach(r => {
-        const k = Object.values(r)[0]||"";
-        const v = Object.values(r)[1]||"";
-        if(k) kv[k.trim()] = v.trim();
+        // Tenta pelas chaves conhecidas primeiro, fallback para posição
+        const keys = Object.keys(r);
+        const k = (r["CAMPO"] || r[keys[0]] || "").trim();
+        const v = (r["VALOR (preencha aqui)"] || r["VALOR"] || r[keys[1]] || "").trim();
+        if(k && k !== "CAMPO") kv[k] = v;
       });
       const pct = s => parseFloat((s||"0").replace("%","").replace(",","."))/100;
       const num = s => parseFloat((s||"0").replace(/[^\d,.-]/g,"").replace(",","."))||0;
@@ -431,10 +433,15 @@
 
     const typeMap = {
       "🆕 Novo Cliente":     ["🆕","var(--accent)"],
+      "Novo Cliente":        ["🆕","var(--accent)"],
       "🏆 Meta Batida":      ["🏆","var(--gold)"],
+      "Meta Batida":         ["🏆","var(--gold)"],
       "⭐ Depoimento":       ["⭐","var(--purple)"],
+      "Depoimento":          ["⭐","var(--purple)"],
       "📋 Case Aprovado":    ["📋","var(--blue)"],
-      "🎉 Conquista Interna":["🎉","var(--accent)"]
+      "Case Aprovado":       ["📋","var(--blue)"],
+      "🎉 Conquista Interna":["🎉","var(--accent)"],
+      "Conquista Interna":   ["🎉","var(--accent)"]
     };
     function renderAchievements() {
       if(!dados.conquistas.length)
@@ -473,7 +480,7 @@
         const sp   = key ? SPRITES[key] : null;
 
         // posição: de 5% (início) até 78% (antes da linha de chegada)
-        const leftPct = done ? 78 : clamp(pct*78, 5, 78);
+        const leftPct = done ? 86 : clamp(pct*84, 4, 84);
 
         const spriteStyle = sp
           ? `background-image:url('${done?sp.celebrate:sp.run}');left:calc(${leftPct}% - 60px)`
@@ -585,7 +592,7 @@
 
     startStars();
     updateClock(); setInterval(updateClock,1000);
-    refreshData(); setInterval(refreshData,300000);
+    refreshData(); setInterval(refreshData,10000);
   </script>
 </body>
 </html>
