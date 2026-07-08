@@ -249,7 +249,7 @@
           headerIdx=i; break;
         }
       }
-      const headers = splitLine(lines[headerIdx]).map(h=>h.trim());
+      const headers = splitLine(lines[headerIdx]).map(h=>h.trim().replace(/\n/g,' ').replace(/\r/g,''));
       return lines.slice(headerIdx+1)
         .map(l => {
           const vals = splitLine(l);
@@ -349,9 +349,13 @@
           prioridade:r["PRIORIDADE"]||"Normal"
         })).sort((a,b)=>a.prioridade==="Alta"?-1:1),
 
-        conquistas: conquistas.filter(r=>(r["EXIBIR NA TV?"]||"").toLowerCase()==="sim").map(r=>({
-          tipo: r["TIPO"]||"",
-          texto:r["DESCRIÇÃO"]||"",
+        conquistas: conquistas.filter(r=>{
+          const exibir = r["EXIBIR NA TV?"] || r["EXIBIR NA\nTV?"] || r["EXIBIR NA TV"] || 
+                         Object.entries(r).find(([k])=>k.includes("EXIBIR"))?.[1] || "";
+          return exibir.toLowerCase()==="sim";
+        }).map(r=>({
+          tipo: (r["TIPO"] || Object.entries(r).find(([k])=>k.trim()==="TIPO")?.[1] || "").trim(),
+          texto:(r["DESCRIÇÃO"] || r["DESCRICAO"] || Object.entries(r).find(([k])=>k.includes("ESCRI"))?.[1] || "").trim(),
           data: r["DATA"]||""
         })).reverse(),
 
@@ -447,8 +451,13 @@
       if(!dados.conquistas.length)
         return `<article class="slide"><h1 class="slide-title">🏆 Mural de Conquistas</h1><div class="feed-wrap"><div class="feed-inner"><div class="achievement card"><div class="person-info"><strong style="color:var(--muted)">Nenhuma conquista cadastrada ainda</strong></div></div></div></div></article>`;
       const cards = dados.conquistas.map(c=>{
-        const t=typeMap[c.tipo]||["✨","var(--accent)"];
-        return `<div class="achievement card"><div class="badge" style="color:${t[1]};border:1px solid ${t[1]}33">${t[0]}</div><div><h3>${c.tipo.replace(/^[^\s]+\s/,"")}</h3><p>${c.texto}</p><time>${c.data?daysAgo(c.data):""}</time></div></div>`;
+        // Normaliza tipo: remove emoji do início para comparação
+        const tipoClean = c.tipo.replace(/^[\p{Emoji}\s]+/u,"").trim();
+        const t = typeMap[c.tipo] || typeMap[tipoClean] || 
+                  Object.entries(typeMap).find(([k])=>k.toLowerCase().includes(tipoClean.toLowerCase()))?.[1] ||
+                  ["✨","var(--accent)"];
+        const label = tipoClean || c.tipo;
+        return `<div class="achievement card"><div class="badge" style="color:${t[1]};border:1px solid ${t[1]}33">${t[0]}</div><div><h3>${label}</h3><p>${c.texto}</p><time>${c.data?daysAgo(c.data):""}</time></div></div>`;
       }).join("");
       const scroll = dados.conquistas.length>4;
       return `<article class="slide"><h1 class="slide-title">🏆 Mural de Conquistas</h1><div class="feed-wrap"><div class="feed-inner ${scroll?"scrolling":""}">${cards}${scroll?cards:""}</div></div></article>`;
