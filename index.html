@@ -12,7 +12,7 @@
       --bg:#0D0D0D;--accent:#2EAD8A;--card:#1A1A1A;--border:#2A2A2A;
       --text:#FFFFFF;--muted:#A0A0A0;--yellow:#FFD93D;--red:#FF4D4D;
       --purple:#B993FF;--blue:#6BB6FF;--gold:#FFD36E;
-      --header:92px;--race:170px;
+      --header:92px;--race:190px;--runner-size:76px;--runner-sheet:304px;
     }
     *{box-sizing:border-box}
     html,body{margin:0;width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
@@ -80,24 +80,24 @@
 
     /* ── PISTA DE CORRIDA ── */
     /* ── PISTA DE CORRIDA ── */
-    .race-footer{position:absolute;z-index:4;left:42px;right:42px;bottom:14px;height:var(--race);padding:10px 24px 10px;background:linear-gradient(180deg,rgba(46,173,138,.08),rgba(12,12,12,.98));border:1px solid rgba(46,173,138,.22);border-radius:18px;box-shadow:0 -20px 60px rgba(0,0,0,.5);overflow:visible;display:flex;flex-direction:column;gap:6px}
+    .race-footer{position:absolute;z-index:4;left:42px;right:42px;bottom:14px;height:var(--race);padding:10px 22px 12px;background:linear-gradient(180deg,rgba(46,173,138,.08),rgba(12,12,12,.98));border:1px solid rgba(46,173,138,.22);border-radius:18px;box-shadow:0 -20px 60px rgba(0,0,0,.5);overflow:hidden;display:flex;flex-direction:column;gap:8px}
     .race-header{display:flex;justify-content:space-between;align-items:center}
     .race-header-left{display:flex;align-items:center;gap:10px}
     .race-kicker{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:var(--accent);background:rgba(46,173,138,.12);border:1px solid rgba(46,173,138,.3);padding:3px 8px;border-radius:6px}
     .race-title{font-size:16px;font-weight:800;color:#fff}
     .race-total{font-size:13px;font-weight:700;color:var(--muted)}
     .race-total strong{color:var(--accent);font-size:15px}
-    .race-lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;flex:1}
+    .race-lanes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;flex:1}
     .race-lane{display:flex;flex-direction:column;gap:4px}
     .race-lane-top{display:flex;justify-content:space-between;align-items:center;padding:0 2px}
     .race-person-name{font-size:13px;font-weight:800;color:#fff}
     .race-lane.done .race-person-name{color:var(--accent)}
     .race-score-inline{font-size:13px;font-weight:700;color:var(--muted)}
     .race-score-inline strong{color:#fff}
-    .race-track{position:relative;height:80px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:linear-gradient(180deg,#151515,#0e0e0e);overflow:visible}
-    .race-track-inner{position:absolute;inset:0;border-radius:10px;overflow:hidden;background:repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0 28px,rgba(255,255,255,.01) 28px 56px)}
-    .finish-line{position:absolute;right:6px;top:3px;width:7px;height:72px;background:repeating-linear-gradient(180deg,#fff 0 7px,#222 7px 14px);border-radius:2px;z-index:2}
-    .flag{position:absolute;right:-2px;top:-14px;font-size:18px;z-index:3;filter:drop-shadow(0 0 6px rgba(255,217,61,.4))}
+    .race-track{position:relative;height:94px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:linear-gradient(180deg,#151515,#0e0e0e);overflow:hidden}
+    .race-track-inner{position:absolute;inset:0;border-radius:12px;overflow:hidden;background:repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0 28px,rgba(255,255,255,.01) 28px 56px)}
+    .finish-line{position:absolute;right:10px;top:7px;width:7px;height:80px;background:repeating-linear-gradient(180deg,#fff 0 7px,#222 7px 14px);border-radius:2px;z-index:2}
+    .flag{position:absolute;right:2px;top:1px;font-size:18px;z-index:3;filter:drop-shadow(0 0 6px rgba(255,217,61,.4))}
     .race-lane.done .race-track{border-color:rgba(46,173,138,.4);box-shadow:0 0 12px rgba(46,173,138,.15)}
     .race-pct{position:absolute;bottom:2px;font-size:9px;font-weight:900;color:rgba(255,255,255,.5);transform:translateX(-50%);z-index:5;white-space:nowrap}
 
@@ -105,19 +105,24 @@
     .runner-sprite{
       position:absolute;
       top:50%;
+      left:var(--runner-left,8%);
       transform:translate(-50%,-50%);
-      width:110px;
-      height:110px;
+      width:var(--runner-size);
+      height:var(--runner-size);
       background-repeat:no-repeat;
-      background-size:440px 110px;
+      background-size:var(--runner-sheet) var(--runner-size);
+      background-position:0 0;
       image-rendering:pixelated;
-      transition:left 1.2s cubic-bezier(.4,0,.2,1);
+      transition:left 1s cubic-bezier(.4,0,.2,1);
       z-index:3;
+      will-change:left,background-position;
+      contain:layout paint;
     }
-    .runner-sprite.running{animation:spriteRun .55s steps(4) infinite}
-    .runner-sprite.done{background-position:-330px 0 !important;animation:none}
+    .runner-sprite.running{animation:spriteRun .62s steps(4) infinite}
+    .runner-sprite.done{animation:spriteCelebrate .9s steps(4) infinite}
 
-    @keyframes spriteRun{from{background-position:0 0}to{background-position:-440px 0}}
+    @keyframes spriteRun{from{background-position:0 0}to{background-position:-304px 0}}
+    @keyframes spriteCelebrate{from{background-position:0 0}to{background-position:-304px 0}}
 
     /* ── OVERLAY ── */
     .overlay{position:fixed;inset:0;display:none;place-items:center;background:rgba(13,13,13,.92);z-index:20;text-align:center;padding:60px}
@@ -202,7 +207,7 @@
       nadia:   { run: "sprites/nadia_correndo.png",   celebrate: "sprites/nadia_comemorando.png"   },
       evelin:  { run: "sprites/evelin_correndo.png",  celebrate: "sprites/evelin_comemorando.png"  }
     };
-    const SPRITE_MAP = { "Wesley": "wesley", "Nádia": "nadia", "Evelin": "evelin" };
+    const SPRITE_MAP = { WESLEY: "wesley", NADIA: "nadia", EVELIN: "evelin" };
     const TIMERS = [30000, 30000, 25000, 25000, 20000];
     const csvURL = gid => `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv&gid=${gid}`;
 
@@ -212,14 +217,44 @@
     // ── UTILS ───────────────────────────────────────────────────
     const $ = s => document.querySelector(s);
     const fmtPct = v => (v*100).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})+"%";
-    const parseBR = d => { const [day,mon,yr] = d.split("/").map(Number); return new Date(yr,mon-1,day); };
+    const parseBR = d => {
+      const s = String(d||"").trim();
+      if(/^\d{4}-\d{2}-\d{2}/.test(s)) return new Date(s.slice(0,10)+"T00:00:00");
+      const [day,mon,yr] = s.split("/").map(Number);
+      return new Date(yr,mon-1,day);
+    };
     const initials = n => n.trim().split(" ").filter(Boolean).slice(0,2).map(p=>p[0]).join("").toUpperCase();
     const clamp = (n,a,b) => Math.max(a,Math.min(b,n));
-    const daysAgo = d => { const diff=Math.max(0,Math.round((new Date()-parseBR(d))/86400000)); return diff===0?"hoje":diff===1?"há 1 dia":`há ${diff} dias`; };
+    const daysAgo = d => {
+      const dt = parseBR(d);
+      if(Number.isNaN(dt.getTime())) return String(d||"");
+      const diff=Math.max(0,Math.round((new Date()-dt)/86400000));
+      return diff===0?"hoje":diff===1?"há 1 dia":`há ${diff} dias`;
+    };
     const avatar = p => p.foto && p.foto.startsWith("http")
       ? `<img class="avatar" src="${p.foto}" alt="${p.nome}" style="border-radius:50%">`
       : `<div class="avatar">${initials(p.nome||"?")}</div>`;
     const bar = (w,color) => `<div class="progress"><i style="width:${clamp(w*100,0,100)}%;background:${color||"var(--accent)"}"></i></div>`;
+
+    function estabilizarCorrida(corrida, mes) {
+      // A publicação CSV do Google Sheets pode entregar uma versão antiga por alguns segundos.
+      // Como contratos do comercial não deveriam diminuir no mês, seguramos o maior realizado por pessoa.
+      const cacheKey = `adaptRace:${normKey(mes||"atual")}`;
+      let cache = {};
+      try { cache = JSON.parse(localStorage.getItem(cacheKey)||"{}"); } catch { cache = {}; }
+      const nextCache = {};
+      const out = corrida.map(c=>{
+        const key = normKey(c.nome);
+        const prev = cache[key];
+        const realizado = prev && Number(prev.meta) === Number(c.meta) && Number(prev.realizado) > Number(c.realizado)
+          ? Number(prev.realizado)
+          : Number(c.realizado);
+        nextCache[key] = {realizado, meta:c.meta};
+        return {...c, realizado};
+      });
+      try { localStorage.setItem(cacheKey, JSON.stringify(nextCache)); } catch {}
+      return out;
+    }
 
     function colorCls(v, type) {
       if(type==="ret")   return v>=.95?"accent":v>=.90?"yellow":"red";
@@ -233,44 +268,75 @@
     }
 
     // ── CSV PARSER ───────────────────────────────────────────────
-    // Pula linhas de título/dica exportadas pelo Sheets e encontra o header real.
+    // Parser robusto para CSV publicado pelo Sheets: suporta aspas, vírgulas e quebras de linha dentro das células.
     const KNOWN_HEADERS = ["CAMPO","SETOR","VENDEDOR","NOME COMPLETO","NOME DO CLIENTE",
-      "TEXTO DO AVISO","TIPO","MÊS DE REFERÊNCIA","CELEBRAR"];
-    function parseCSV(text) {
-      const lines = text.trim().split("\n");
-      let headerIdx = 0;
-      for(let i=0;i<Math.min(lines.length,6);i++){
-        const cols = splitLine(lines[i]).map(c=>c.trim().toUpperCase());
-        if(KNOWN_HEADERS.some(h=>cols.some(c=>c===h||c.startsWith(h)))){
-          headerIdx=i; break;
-        }
+      "TEXTO DO AVISO","TIPO","MES DE REFERENCIA","CELEBRAR","EXIBIR NA TV"];
+
+    const normKey = v => String(v||"")
+      .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+      .replace(/\r|\n/g," ")
+      .replace(/[^a-zA-Z0-9]+/g," ")
+      .trim().toUpperCase();
+
+    const truthy = v => ["SIM","S","YES","Y","TRUE","1","EXIBIR","ATIVO","OK"].includes(normKey(v));
+
+    function getVal(row, names, fallbackIndex=null) {
+      const wanted = Array.isArray(names) ? names.map(normKey) : [normKey(names)];
+      for(const [k,v] of Object.entries(row)) {
+        if(k === "__cols") continue;
+        const nk = normKey(k);
+        if(wanted.includes(nk)) return String(v||"").trim();
       }
-      const headers = splitLine(lines[headerIdx]).map(h=>h.trim().replace(/\n/g,' ').replace(/\r/g,''));
-      return lines.slice(headerIdx+1)
-        .map(l => {
-          const vals = splitLine(l);
-          const obj = {};
-          headers.forEach((h,i) => obj[h] = (vals[i]||"").trim());
-          return obj;
-        })
-        .filter(r => Object.values(r).some(v => v !== ""));
+      if(fallbackIndex !== null && row.__cols) return String(row.__cols[fallbackIndex]||"").trim();
+      return "";
     }
-    function splitLine(line) {
-      const res=[]; let cur="", inQ=false;
-      for(let i=0;i<line.length;i++){
-        const c=line[i];
-        if(c==='"'&&!inQ){inQ=true;continue}
-        if(c==='"'&&inQ){if(line[i+1]==='"'){cur+='"';i++}else inQ=false;continue}
-        if(c===','&&!inQ){res.push(cur);cur="";continue}
+
+    function parseCSVRows(text) {
+      const rows=[]; let row=[], cur="", inQ=false;
+      const src = String(text||"").replace(/^\uFEFF/,"");
+      for(let i=0;i<src.length;i++){
+        const c=src[i];
+        if(c==='"'){
+          if(inQ && src[i+1]==='"'){cur+='"'; i++;}
+          else inQ=!inQ;
+          continue;
+        }
+        if(c===',' && !inQ){row.push(cur); cur=""; continue;}
+        if((c==='\n' || c==='\r') && !inQ){
+          if(c==='\r' && src[i+1]==='\n') i++;
+          row.push(cur); cur="";
+          if(row.some(v=>String(v).trim()!=="")) rows.push(row);
+          row=[];
+          continue;
+        }
         cur+=c;
       }
-      res.push(cur);
-      return res;
+      row.push(cur);
+      if(row.some(v=>String(v).trim()!=="")) rows.push(row);
+      return rows;
+    }
+
+    function parseCSV(text) {
+      const rows = parseCSVRows(text);
+      if(!rows.length) return [];
+      let headerIdx = 0;
+      for(let i=0;i<Math.min(rows.length,12);i++){
+        const cols = rows[i].map(normKey);
+        if(KNOWN_HEADERS.some(h=>cols.some(c=>c===h||c.startsWith(h)))) { headerIdx=i; break; }
+      }
+      const headers = rows[headerIdx].map(h=>String(h||"").trim().replace(/\r|\n/g," "));
+      return rows.slice(headerIdx+1)
+        .map(vals => {
+          const obj = {__cols: vals};
+          headers.forEach((h,i) => obj[h] = String(vals[i]||"").trim());
+          return obj;
+        })
+        .filter(r => r.__cols.some(v => String(v||"").trim() !== ""));
     }
 
     // ── FETCH ────────────────────────────────────────────────────
     async function fetchAba(key) {
-      const r = await fetch(csvURL(GIDS[key]), {cache:"no-store"});
+      const r = await fetch(`${csvURL(GIDS[key])}&_=${Date.now()}`, {cache:"no-store"});
       if(!r.ok) throw new Error(`Falha: ${key}`);
       return parseCSV(await r.text());
     }
@@ -286,88 +352,102 @@
       // Dados do Mês: estrutura label/valor — col B=campo, col C=valor
       const kv = {};
       dadosMes.forEach(r => {
-        // Tenta pelas chaves conhecidas primeiro, fallback para posição
-        const keys = Object.keys(r);
-        const k = (r["CAMPO"] || r[keys[0]] || "").trim();
-        const v = (r["VALOR (preencha aqui)"] || r["VALOR"] || r[keys[1]] || "").trim();
-        if(k && k !== "CAMPO") kv[k] = v;
+        const k = getVal(r,["CAMPO","MÉTRICA","METRICA"],0);
+        const v = getVal(r,["VALOR (preencha aqui)","VALOR","RESULTADO"],1);
+        if(k && normKey(k) !== "CAMPO") kv[normKey(k)] = v;
       });
-      const pct = s => parseFloat((s||"0").replace("%","").replace(",","."))/100;
-      const num = s => parseFloat((s||"0").replace(/[^\d,.-]/g,"").replace(",","."))||0;
+      const kvGet = name => kv[normKey(name)] || "";
+      const pct = s => {
+        const raw = String(s||"0").replace("%","").replace(",",".");
+        const n = parseFloat(raw);
+        return Number.isFinite(n) ? (n > 1 ? n/100 : n) : 0;
+      };
+      const num = s => parseFloat(String(s||"0").replace(/[^\d,.-]/g,"").replace(",","."))||0;
+      const activeRows = rows => rows.filter(r=>truthy(getVal(r,["ATIVO?","ATIVO","STATUS ATIVO"])));
+      const priorityRank = p => normKey(p)==="ALTA" ? 0 : 1;
 
-      return {
-        mes:              kv["MÊS DE REFERÊNCIA"]||"",
-        clientes_ativos:  num(kv["CLIENTES ATIVOS (fim do mês)"]),
-        novos_clientes:   num(kv["NOVOS CLIENTES NO MÊS"]),
-        meta_novos:       num(kv["META DE NOVOS CLIENTES"]),
-        clientes_sairam:  num(kv["CLIENTES QUE SAÍRAM"]),
-        meta_retencao:    pct(kv["META DE RETENÇÃO (%)"]),
-        retencao:         pct(kv["RETENÇÃO REALIZADA (%)"]),
-        streak:           num(kv["STREAK DE RETENÇÃO (meses)"]),
+      const saida = {
+        mes:              kvGet("MÊS DE REFERÊNCIA")||kvGet("MES DE REFERENCIA"),
+        clientes_ativos:  num(kvGet("CLIENTES ATIVOS (fim do mês)")),
+        novos_clientes:   num(kvGet("NOVOS CLIENTES NO MÊS")),
+        meta_novos:       num(kvGet("META DE NOVOS CLIENTES")),
+        clientes_sairam:  num(kvGet("CLIENTES QUE SAÍRAM")),
+        meta_retencao:    pct(kvGet("META DE RETENÇÃO (%)")),
+        retencao:         pct(kvGet("RETENÇÃO REALIZADA (%)")),
+        streak:           num(kvGet("STREAK DE RETENÇÃO (meses)")),
 
         metas_setor: metas.map(r=>({
-          setor:     r["SETOR"]||r[Object.keys(r)[0]],
-          meta:      num(r["META DO MÊS"]),
-          realizado: num(r["REALIZADO"]),
-          destaque:  r["DESTAQUE (texto livre)"]||""
+          setor:     getVal(r,"SETOR",0),
+          meta:      num(getVal(r,["META DO MÊS","META DO MES","META"],1)),
+          realizado: num(getVal(r,["REALIZADO","FEITO","RESULTADO"],2)),
+          destaque:  getVal(r,["DESTAQUE (texto livre)","DESTAQUE","OBSERVAÇÃO","OBSERVACAO"],3)
         })).filter(r=>r.setor&&r.meta>0),
 
         corrida: corrida.map(r=>({
-          nome:      r["VENDEDOR"]||r[Object.keys(r)[0]],
-          meta:      num(r["META DO MÊS"]),
-          realizado: num(r["REALIZADO"]),
-          obs:       r["OBSERVAÇÃO"]||""
+          nome:      getVal(r,["VENDEDOR","NOME","COMERCIAL"],0),
+          meta:      num(getVal(r,["META DO MÊS","META DO MES","META"],1)),
+          realizado: num(getVal(r,["REALIZADO","CONTRATOS","FECHADOS","RESULTADO"],2)),
+          obs:       getVal(r,["OBSERVAÇÃO","OBSERVACAO","OBS"],3)
         })).filter(r=>r.nome&&r.meta>0),
 
-        time: time.filter(r=>(r["ATIVO?"]||"").toLowerCase()==="sim").map(r=>({
-          nome:        r["NOME COMPLETO"]||"",
-          cargo:       r["CARGO / SETOR"]||"",
-          aniversario: (r["ANIVERSÁRIO"]||"").slice(0,5),
-          entrada:     r["DATA ENTRADA"]||"",
-          foto:        r["FOTO (URL pública)"]||""
+        time: activeRows(time).map(r=>({
+          nome:        getVal(r,["NOME COMPLETO","NOME"],0),
+          cargo:       getVal(r,["CARGO / SETOR","CARGO","SETOR"],1),
+          aniversario: getVal(r,["ANIVERSÁRIO","ANIVERSARIO","DATA ANIVERSARIO"],2).slice(0,5),
+          entrada:     getVal(r,["DATA ENTRADA","ENTRADA","DATA DE ENTRADA"],3),
+          foto:        getVal(r,["FOTO (URL pública)","FOTO URL PUBLICA","FOTO","URL FOTO"],4)
         })),
 
         novos_membros: (() => {
           const lim=new Date(); lim.setDate(lim.getDate()-60);
-          return time.filter(r=>{
-            if((r["ATIVO?"]||"").toLowerCase()!=="sim") return false;
-            try{ return parseBR(r["DATA ENTRADA"])>=lim; }catch{return false;}
-          }).map(r=>({nome:r["NOME COMPLETO"]||"",cargo:r["CARGO / SETOR"]||"",entrada:r["DATA ENTRADA"]||"",foto:r["FOTO (URL pública)"]||""}));
+          return activeRows(time).filter(r=>{
+            try{ return parseBR(getVal(r,["DATA ENTRADA","ENTRADA","DATA DE ENTRADA"],3))>=lim; }catch{return false;}
+          }).map(r=>({
+            nome:getVal(r,["NOME COMPLETO","NOME"],0),
+            cargo:getVal(r,["CARGO / SETOR","CARGO","SETOR"],1),
+            entrada:getVal(r,["DATA ENTRADA","ENTRADA","DATA DE ENTRADA"],3),
+            foto:getVal(r,["FOTO (URL pública)","FOTO URL PUBLICA","FOTO","URL FOTO"],4)
+          }));
         })(),
 
-        clientes: clientes.filter(r=>(r["STATUS"]||"").toLowerCase()==="ativo").map(r=>({
-          nome:  r["NOME DO CLIENTE"]||"",
-          inicio:r["DATA DE INÍCIO"]||""
-        })),
+        clientes: clientes.filter(r=>normKey(getVal(r,["STATUS","ATIVO?","ATIVO"]))==="ATIVO" || truthy(getVal(r,["ATIVO?","ATIVO"]))).map(r=>({
+          nome:  getVal(r,["NOME DO CLIENTE","CLIENTE","NOME"],0),
+          inicio:getVal(r,["DATA DE INÍCIO","DATA DE INICIO","INÍCIO","INICIO"],1)
+        })).filter(c=>c.nome),
 
-        avisos: avisos.filter(r=>(r["ATIVO?"]||"").toLowerCase()==="sim").map(r=>({
-          texto:     r["TEXTO DO AVISO"]||"",
-          prioridade:r["PRIORIDADE"]||"Normal"
-        })).sort((a,b)=>a.prioridade==="Alta"?-1:1),
+        avisos: activeRows(avisos).map(r=>({
+          texto:     getVal(r,["TEXTO DO AVISO","AVISO","TEXTO"],0),
+          prioridade:getVal(r,["PRIORIDADE"],1)||"Normal"
+        })).filter(a=>a.texto).sort((a,b)=>priorityRank(a.prioridade)-priorityRank(b.prioridade)),
 
         conquistas: conquistas.filter(r=>{
-          const exibir = r["EXIBIR NA TV?"] || r["EXIBIR NA\nTV?"] || r["EXIBIR NA TV"] || 
-                         Object.entries(r).find(([k])=>k.includes("EXIBIR"))?.[1] || "";
-          const exibirLow = exibir.toLowerCase().trim();
-          return exibirLow==="sim" || exibirLow==="exibir" || exibirLow==="s" || exibirLow==="yes";
+          const tipo  = getVal(r,["TIPO","CATEGORIA"],0);
+          const texto = getVal(r,["DESCRIÇÃO","DESCRICAO","CONQUISTA","TEXTO","DESCRIÇÃO DA CONQUISTA"],1);
+          const exibir = getVal(r,["EXIBIR NA TV?","EXIBIR NA TV","EXIBIR","TV","PUBLICAR"],3);
+          // Se a coluna existir, precisa estar marcada como sim. Se não existir, exibe linhas completas.
+          const hasExibirColumn = Object.keys(r).some(k=>normKey(k).includes("EXIBIR"));
+          return tipo && texto && (!hasExibirColumn || truthy(exibir));
         }).map(r=>({
-          tipo: (r["TIPO"] || Object.entries(r).find(([k])=>k.trim()==="TIPO")?.[1] || "").trim(),
-          texto:(r["DESCRIÇÃO"] || r["DESCRICAO"] || Object.entries(r).find(([k])=>k.includes("ESCRI"))?.[1] || "").trim(),
-          data: r["DATA"]||""
+          tipo: getVal(r,["TIPO","CATEGORIA"],0),
+          texto:getVal(r,["DESCRIÇÃO","DESCRICAO","CONQUISTA","TEXTO","DESCRIÇÃO DA CONQUISTA"],1),
+          data: getVal(r,["DATA","DATA DA CONQUISTA"],2)
         })).reverse(),
 
         tarefas: tarefas.map(r=>({
-          setor:     r["SETOR"]||r[Object.keys(r)[0]],
-          total:     num(r["TAREFAS NA SEMANA"]),
-          cumpridas: num(r["CUMPRIDAS"]),
-          atrasadas: num(r["ATRASADAS"])
+          setor:     getVal(r,"SETOR",0),
+          total:     num(getVal(r,["TAREFAS NA SEMANA","TOTAL","TAREFAS"],1)),
+          cumpridas: num(getVal(r,["CUMPRIDAS","FEITAS","CONCLUÍDAS","CONCLUIDAS"],2)),
+          atrasadas: num(getVal(r,["ATRASADAS","EM ATRASO"],3))
         })).filter(r=>r.setor),
 
-        contratos: contratos.filter(r=>(r["CELEBRAR? (Sim/Não)"]||"").toLowerCase()==="sim").map(r=>({
-          cliente:r["NOME DO CLIENTE"]||"",
-          data:   r["DATA DE ASSINATURA"]||""
-        }))
+        contratos: contratos.filter(r=>truthy(getVal(r,["CELEBRAR? (Sim/Não)","CELEBRAR?","CELEBRAR","EXIBIR","ATIVO?"],2))).map(r=>({
+          cliente:getVal(r,["NOME DO CLIENTE","CLIENTE","NOME"],0),
+          data:   getVal(r,["DATA DE ASSINATURA","DATA"],1)
+        })).filter(c=>c.cliente)
       };
+
+      saida.corrida = estabilizarCorrida(saida.corrida, saida.mes);
+      return saida;
     }
 
     // ── RENDERS ──────────────────────────────────────────────────
@@ -483,17 +563,16 @@
       const lanes = dados.corrida.map(c=>{
         const pct  = c.meta>0 ? c.realizado/c.meta : 0;
         const done = pct>=1;
-        const key  = SPRITE_MAP[c.nome];
+        const key  = SPRITE_MAP[normKey(c.nome)];
         const sp   = key ? SPRITES[key] : null;
 
-        // Posição: sprite se move de 4% até 88%
-        // done=false: proporcional à %, done=true: encosta na linha
-        const leftPct = done ? 105 : clamp(pct*84, 4, 84);
+        // Posição: começa em 8%, anda até 86% e, quando bate, para junto da linha.
+        // Mantemos dentro da pista para não cortar o sprite nem invadir outra raia.
+        const leftPct = done ? 88 : clamp(8 + pct*78, 8, 86);
 
         const spriteEl = sp
-          ? `<div class="runner-sprite ${done?"done":"running"}" 
-               style="background-image:url('${done?sp.celebrate:sp.run}');
-                      background-size:320px 80px;left:${leftPct}%"></div>`
+          ? `<div class="runner-sprite ${done?"done":"running"}"
+               style="background-image:url('${done?sp.celebrate:sp.run}');--runner-left:${leftPct}%"></div>`
           : `<div style="position:absolute;left:${leftPct}%;top:50%;transform:translate(-50%,-50%);
                           width:32px;height:32px;background:var(--accent);border-radius:50%;
                           display:grid;place-items:center;font-size:18px;z-index:3">
@@ -591,30 +670,47 @@
     }
 
     // ── REFRESH ──────────────────────────────────────────────────
-    let lastCorridaHash = "";
+    let lastCorridaHash = "", lastSlidesHash = "", firstRender = true;
     function corridaHash(corrida) {
-      return JSON.stringify(corrida.map(c=>({n:c.nome,r:c.realizado,m:c.meta})));
+      return JSON.stringify((corrida||[]).map(c=>({n:c.nome,r:c.realizado,m:c.meta})));
+    }
+    function slidesHash(d) {
+      if(!d) return "";
+      const {corrida, ...rest} = d;
+      return JSON.stringify(rest);
+    }
+    function renderSlidesOnly() {
+      $("#slides").innerHTML = [renderPulse(),renderSectors(),renderCulture(),renderAchievements(),renderNotices()].join("");
+      $("#dots").innerHTML = TIMERS.map((_,i)=>`<button class="dot ${i===active?"active":""}">${""}</button>`).join("");
+      document.querySelectorAll(".dot").forEach((d,i)=>d.onclick=()=>goTo(i,true));
+      updateActive();
+      checkCelebration();
     }
 
     async function refreshData() {
       try {
         const novosDados = await carregarDados();
-        const newHash = corridaHash(novosDados.corrida||[]);
-        const corridaMudou = newHash !== lastCorridaHash;
+        const newCorridaHash = corridaHash(novosDados.corrida||[]);
+        const newSlidesHash = slidesHash(novosDados);
+        const corridaMudou = newCorridaHash !== lastCorridaHash;
+        const slidesMudaram = newSlidesHash !== lastSlidesHash;
 
         dados = novosDados;
 
-        if(corridaMudou) {
-          lastCorridaHash = newHash;
-          render(); // re-renderiza tudo (inclui pista)
+        if(firstRender) {
+          firstRender = false;
+          lastCorridaHash = newCorridaHash;
+          lastSlidesHash = newSlidesHash;
+          render();
+          scheduleNext();
         } else {
-          // Só atualiza slides e dados, NÃO recria a pista (evita tremido)
-          const slidesEl = $("#slides");
-          if(slidesEl) {
-            slidesEl.innerHTML = [renderPulse(),renderSectors(),renderCulture(),renderAchievements(),renderNotices()].join("");
-            document.querySelectorAll(".dot").forEach((d,i)=>d.onclick=()=>goTo(i,true));
-            updateActive();
-            checkCelebration();
+          if(slidesMudaram) {
+            lastSlidesHash = newSlidesHash;
+            renderSlidesOnly();
+          }
+          if(corridaMudou) {
+            lastCorridaHash = newCorridaHash;
+            renderRace();
           }
         }
         $("#loading").style.display="none";
