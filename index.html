@@ -12,7 +12,7 @@
       --bg:#0D0D0D;--accent:#2EAD8A;--card:#1A1A1A;--border:#2A2A2A;
       --text:#FFFFFF;--muted:#A0A0A0;--yellow:#FFD93D;--red:#FF4D4D;
       --purple:#B993FF;--blue:#6BB6FF;--gold:#FFD36E;
-      --header:92px;--race:148px;
+      --header:92px;--race:170px;
     }
     *{box-sizing:border-box}
     html,body{margin:0;width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
@@ -79,49 +79,45 @@
     .dot:hover,.nav-btn:hover,.pause-btn:hover{background:rgba(46,173,138,.22)}
 
     /* ── PISTA DE CORRIDA ── */
-    .race-footer{position:absolute;z-index:4;left:42px;right:42px;bottom:14px;height:var(--race);padding:12px 20px 14px;background:linear-gradient(180deg,rgba(46,173,138,.09),rgba(18,18,18,.97));border:1px solid rgba(46,173,138,.20);border-radius:18px;box-shadow:0 -16px 60px rgba(0,0,0,.4);overflow:hidden}
-    .race-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-    .race-kicker{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--accent)}
-    .race-title{font-size:18px;font-weight:800;margin-top:2px}
-    .race-goal{text-align:right;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-    .race-goal strong{display:block;color:#fff;font-size:16px;margin-top:2px;letter-spacing:-.02em;text-transform:none}
-    .race-lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .race-lane{display:grid;grid-template-columns:80px 1fr 56px;align-items:center;gap:8px}
-    .race-person-name{font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .race-track{position:relative;height:52px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.04) 0 22px,rgba(255,255,255,.015) 22px 44px),linear-gradient(180deg,#181818,#111);overflow:visible}
-    .finish-line{position:absolute;right:8px;top:4px;width:8px;height:42px;background:conic-gradient(#fff 25%,#111 0 50%,#fff 0 75%,#111 0) 0 0/8px 8px;border-radius:2px;z-index:2}
-    .flag{position:absolute;right:2px;top:-10px;font-size:16px;z-index:3}
+    /* ── PISTA DE CORRIDA ── */
+    .race-footer{position:absolute;z-index:4;left:42px;right:42px;bottom:14px;height:var(--race);padding:10px 24px 10px;background:linear-gradient(180deg,rgba(46,173,138,.08),rgba(12,12,12,.98));border:1px solid rgba(46,173,138,.22);border-radius:18px;box-shadow:0 -20px 60px rgba(0,0,0,.5);overflow:visible;display:flex;flex-direction:column;gap:6px}
+    .race-header{display:flex;justify-content:space-between;align-items:center}
+    .race-header-left{display:flex;align-items:center;gap:10px}
+    .race-kicker{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:var(--accent);background:rgba(46,173,138,.12);border:1px solid rgba(46,173,138,.3);padding:3px 8px;border-radius:6px}
+    .race-title{font-size:16px;font-weight:800;color:#fff}
+    .race-total{font-size:13px;font-weight:700;color:var(--muted)}
+    .race-total strong{color:var(--accent);font-size:15px}
+    .race-lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;flex:1}
+    .race-lane{display:flex;flex-direction:column;gap:4px}
+    .race-lane-top{display:flex;justify-content:space-between;align-items:center;padding:0 2px}
+    .race-person-name{font-size:13px;font-weight:800;color:#fff}
+    .race-lane.done .race-person-name{color:var(--accent)}
+    .race-score-inline{font-size:13px;font-weight:700;color:var(--muted)}
+    .race-score-inline strong{color:#fff}
+    .race-track{position:relative;height:80px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:linear-gradient(180deg,#151515,#0e0e0e);overflow:visible}
+    .race-track-inner{position:absolute;inset:0;border-radius:10px;overflow:hidden;background:repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0 28px,rgba(255,255,255,.01) 28px 56px)}
+    .finish-line{position:absolute;right:6px;top:3px;width:7px;height:72px;background:repeating-linear-gradient(180deg,#fff 0 7px,#222 7px 14px);border-radius:2px;z-index:2}
+    .flag{position:absolute;right:-2px;top:-14px;font-size:18px;z-index:3;filter:drop-shadow(0 0 6px rgba(255,217,61,.4))}
+    .race-lane.done .race-track{border-color:rgba(46,173,138,.4);box-shadow:0 0 12px rgba(46,173,138,.15)}
+    .race-pct{position:absolute;bottom:2px;font-size:9px;font-weight:900;color:rgba(255,255,255,.5);transform:translateX(-50%);z-index:5;white-space:nowrap}
 
     /* Sprite animado */
     .runner-sprite{
       position:absolute;
       top:50%;
-      transform:translateY(-50%);
-      width:120px;   /* largura de 1 frame */
-      height:120px;
+      transform:translate(-50%,-50%);
+      width:80px;
+      height:80px;
       background-repeat:no-repeat;
-      background-size:480px 120px; /* spritesheet 4 frames */
+      background-size:320px 80px;
       image-rendering:pixelated;
       transition:left 1.2s cubic-bezier(.4,0,.2,1);
       z-index:3;
     }
-    .runner-sprite.running{animation:spriteRun .5s steps(4) infinite}
-    .runner-sprite.done{background-position:-360px 0 !important;animation:none}
+    .runner-sprite.running{animation:spriteRun .55s steps(4) infinite}
+    .runner-sprite.done{background-position:-240px 0 !important;animation:none}
 
-    @keyframes spriteRun{
-      from{background-position:0 0}
-      to{background-position:-480px 0}
-    }
-    @keyframes spriteCelebrate{
-      from{background-position:0 0}
-      to{background-position:-480px 0}
-    }
-
-    .runner-label{position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:900;color:#fff;background:rgba(13,13,13,.8);border:1px solid var(--border);border-radius:999px;padding:1px 5px;white-space:nowrap;z-index:4}
-    .race-score{font-size:14px;font-weight:800;text-align:right;color:var(--muted)}
-    .race-score strong{display:block;color:#fff;font-size:16px}
-    .race-lane.done .race-person-name{color:var(--accent)}
-    .race-lane.done .race-track{border-color:rgba(46,173,138,.45)}
+    @keyframes spriteRun{from{background-position:0 0}to{background-position:-320px 0}}
 
     /* ── OVERLAY ── */
     .overlay{position:fixed;inset:0;display:none;place-items:center;background:rgba(13,13,13,.92);z-index:20;text-align:center;padding:60px}
@@ -479,8 +475,9 @@
     // ── PISTA DE CORRIDA COM SPRITES ────────────────────────────
     function renderRace() {
       if(!dados.corrida||!dados.corrida.length) return;
-      const metaTotal = dados.corrida.reduce((s,c)=>s+c.meta,0);
-      const realkTotal = dados.corrida.reduce((s,c)=>s+c.realizado,0);
+      const metaTotal   = dados.corrida.reduce((s,c)=>s+c.meta,0);
+      const realTotal   = dados.corrida.reduce((s,c)=>s+c.realizado,0);
+      const pctTotal    = metaTotal>0 ? Math.round(realTotal/metaTotal*100) : 0;
 
       const lanes = dados.corrida.map(c=>{
         const pct  = c.meta>0 ? c.realizado/c.meta : 0;
@@ -488,32 +485,47 @@
         const key  = SPRITE_MAP[c.nome];
         const sp   = key ? SPRITES[key] : null;
 
-        // posição: de 5% (início) até 78% (antes da linha de chegada)
-        const leftPct = done ? 86 : clamp(pct*84, 4, 84);
-
-        const spriteStyle = sp
-          ? `background-image:url('${done?sp.celebrate:sp.run}');left:calc(${leftPct}% - 60px)`
-          : `left:calc(${leftPct}% - 23px)`;
+        // Posição: sprite se move de 4% até 88%
+        // done=false: proporcional à %, done=true: encosta na linha
+        const leftPct = done ? 88 : clamp(pct*86, 4, 86);
 
         const spriteEl = sp
-          ? `<div class="runner-sprite ${done?"done":"running"}" style="${spriteStyle}"><span class="runner-label">${Math.round(pct*100)}%</span></div>`
-          : `<div class="runner-sprite ${done?"done":"running"}" style="left:calc(${leftPct}% - 23px);width:46px;height:46px;background:var(--accent);border-radius:50%;display:grid;place-items:center;font-size:22px">${done?"🎉":"🏃"}<span class="runner-label">${Math.round(pct*100)}%</span></div>`;
+          ? `<div class="runner-sprite ${done?"done":"running"}" 
+               style="background-image:url('${done?sp.celebrate:sp.run}');
+                      background-size:320px 80px;left:${leftPct}%"></div>`
+          : `<div style="position:absolute;left:${leftPct}%;top:50%;transform:translate(-50%,-50%);
+                          width:32px;height:32px;background:var(--accent);border-radius:50%;
+                          display:grid;place-items:center;font-size:18px;z-index:3">
+               ${done?"🏆":"🏃"}
+             </div>`;
+
+        const scoreColor = done ? "var(--accent)" : pct>=0.8 ? "var(--yellow)" : "var(--muted)";
+        const scoreLabel = done ? "✅ Bateu!" : `${Math.round(pct*100)}%`;
 
         return `<div class="race-lane ${done?"done":""}">
-          <div class="race-person-name">${c.nome}</div>
+          <div class="race-lane-top">
+            <div class="race-person-name">${c.nome}</div>
+            <div class="race-score-inline" style="color:${scoreColor}">
+              <strong>${c.realizado}</strong>/${c.meta} ${done?"🏆":""}
+            </div>
+          </div>
           <div class="race-track">
+            <div class="race-track-inner"></div>
             <div class="finish-line"></div>
             <span class="flag">🏁</span>
             ${spriteEl}
+            <span class="race-pct" style="left:${leftPct}%">${scoreLabel}</span>
           </div>
-          <div class="race-score"><strong>${c.realizado}/${c.meta}</strong>${done?"🏆":""}</div>
         </div>`;
       }).join("");
 
       document.getElementById("raceTrack").innerHTML = `
         <div class="race-header">
-          <div><div class="race-kicker">🏁 Comercial</div><div class="race-title">Corrida de Metas — ${dados.mes}</div></div>
-          <div class="race-goal">Time comercial<strong>${realkTotal}/${metaTotal} contratos</strong></div>
+          <div class="race-header-left">
+            <span class="race-kicker">🏁 Comercial</span>
+            <span class="race-title">Corrida de Metas — ${dados.mes}</span>
+          </div>
+          <div class="race-total">Time: <strong>${realTotal}/${metaTotal}</strong> contratos (${pctTotal}%)</div>
         </div>
         <div class="race-lanes">${lanes}</div>`;
     }
